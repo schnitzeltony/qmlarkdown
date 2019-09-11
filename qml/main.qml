@@ -10,8 +10,8 @@ import CMark 1.0
 ApplicationWindow {
   id: window
   visible: true
-  width: 640
-  height: 480
+  width: 800
+  height: 600
   visibility: "Maximized"
   title: qsTr("Simple WYSIWYG CommonMark editor")
 

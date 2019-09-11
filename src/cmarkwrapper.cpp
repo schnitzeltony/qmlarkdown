@@ -6,7 +6,6 @@
 
 CMarkWrapper::CMarkWrapper(QObject *parent) : QObject(parent)
 {
-
 }
 
 int CMarkWrapper::registerQML()
