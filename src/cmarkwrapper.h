@@ -19,8 +19,7 @@ public:
 
   enum OutputStyle {
     StyleDefault = 0,
-    StyleQTLabel = 1,
-    StyleGithub = 2,
+    StyleGithub = 1,
   };
   Q_ENUM(OutputStyle)
 
