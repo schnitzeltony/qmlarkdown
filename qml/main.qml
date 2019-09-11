@@ -14,6 +14,15 @@ ApplicationWindow {
   visibility: "Maximized"
   title: qsTr("Simple WYSIWYG CommonMark editor")
 
+  Timer {
+      id: userInputTimer
+      interval: 500;
+      onTriggered: {
+          webView.loadHtml(CMark.stringToHtml(0, textIn.text, 2), "")
+          //textOut.text = CMark.stringToHtml(0, text)
+      }
+  }
+
   Flickable {
       Material.theme: Material.Dark
       id: mainFlickable
@@ -39,8 +48,7 @@ ApplicationWindow {
           id: textIn
           wrapMode: TextEdit.NoWrap
           onTextChanged: {
-            webView.loadHtml(CMark.stringToHtml(0, text, 2), "")
-            //textOut.text = CMark.stringToHtml(0, text)
+              userInputTimer.restart()
           }
         }
       }
