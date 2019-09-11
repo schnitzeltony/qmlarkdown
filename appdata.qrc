@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+    </qresource>
+    <qresource prefix="/data">
+        <file>github-markdown-css/github-markdown.css</file>
+        <file>styles/common-footer</file>
+        <file>styles/common-header</file>
+        <file>styles/github-footer</file>
+        <file>styles/github-header</file>
+    </qresource>
+</RCC>

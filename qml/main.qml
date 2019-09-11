@@ -39,7 +39,8 @@ ApplicationWindow {
           id: textIn
           wrapMode: TextEdit.NoWrap
           onTextChanged: {
-            webView.loadHtml(CMark.stringToHtml(0, text), "")
+            webView.loadHtml(CMark.stringToHtml(0, text, 2), "")
+            //textOut.text = CMark.stringToHtml(0, text)
           }
         }
       }
@@ -52,6 +53,27 @@ ApplicationWindow {
         color: Material.background
       }
 
+      /*ScrollView {
+        anchors.top: htmlTools.bottom
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        width: parent.width / 2
+        padding: 8
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+        TextArea {
+          id: textOut
+          wrapMode: TextEdit.NoWrap
+        }
+      }*/
+
+      /*Label {
+        id: webView
+        anchors.top: htmlTools.bottom
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        width: parent.width / 2
+      }*/
       WebEngineView {
         id: webView
         anchors.top: htmlTools.bottom

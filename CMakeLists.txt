@@ -30,7 +30,7 @@ set(SOURCES
 )
 
 set(QML_SOURCES
-    qml/qml.qrc
+    appdata.qrc
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${QML_SOURCES})

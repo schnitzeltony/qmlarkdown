@@ -12,10 +12,17 @@ class CMarkWrapper : public QObject
   Q_OBJECT
 public:
   enum TreatParam {
-      AsString = 0,
-      AsFilename = 1,
+    AsString = 0,
+    AsFilename = 1,
   };
   Q_ENUM(TreatParam)
+
+  enum OutputStyle {
+    StyleDefault = 0,
+    StyleQTLabel = 1,
+    StyleGithub = 2,
+  };
+  Q_ENUM(OutputStyle)
 
   /**
    * @brief Register CMark 1.0 to Qml
@@ -29,7 +36,7 @@ public:
    * @param strIn Either Commonmark formatted text or filename or..
    * @return Text in HTML format
    */
-  Q_INVOKABLE static QString stringToHtml(TreatParam paramAs, const QString &strIn);
+  Q_INVOKABLE static QString stringToHtml(TreatParam paramAs, const QString &strIn, OutputStyle outputStyle = StyleDefault);
 
 signals:
 
