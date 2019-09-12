@@ -5,6 +5,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls.Material 2.12
 import QtWebEngine 1.8
 import QtQuick.Layouts 1.12
+import Qt.labs.settings 1.0
 
 import CMark 1.0
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
@@ -24,7 +25,7 @@ ApplicationWindow {
     property var convertStrings: ["Cmark", "Sundown"]
 
     property bool showOnlineHelp: false
-    readonly property string helpUrl: "https://commonmark.org/help/"
+    readonly property string helpUrl: settings.helpUrl
 
     function updateHtml() {
         var styleHtml = 0
@@ -38,8 +39,16 @@ ApplicationWindow {
             break;
         }
 
-        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), baseUri.text)
+        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), baseUrl.text)
         qtLabelView.text = CMark.stringToHtml(0, textIn.text, styleHtml)
+    }
+
+    Settings {
+        id: settings
+        property alias baseUrl: baseUrl.text
+        property string helpUrl: "https://commonmark.org/help/"
+        property alias style: comboStyle.currentIndex
+        property alias convertType: comboConvert.currentIndex
     }
 
     FontLoader {
@@ -109,7 +118,7 @@ ApplicationWindow {
                     color: "white"
                 }
                 ComboBox {
-                    id: comboConver
+                    id: comboConvert
                     model: convertStrings
                 }
                 Item { // just margin
@@ -160,7 +169,7 @@ ApplicationWindow {
                     color: "white"
                 }
                 TextField {
-                    id: baseUri
+                    id: baseUrl
                     Layout.fillWidth: true
                     onTextChanged: updateHtml()
                 }
