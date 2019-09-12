@@ -45,10 +45,13 @@ ApplicationWindow {
 
     Settings {
         id: settings
+        // interactive
         property alias baseUrl: baseUrl.text
-        property string helpUrl: "https://commonmark.org/help/"
         property alias style: comboStyle.currentIndex
         property alias convertType: comboConvert.currentIndex
+        // non-interactive
+        property string helpUrl: "https://commonmark.org/help/"
+        property int userActiveIntervall: 300
     }
 
     FontLoader {
@@ -57,7 +60,7 @@ ApplicationWindow {
 
     Timer {
         id: userInputTimer
-        interval: 500;
+        interval: settings.userActiveIntervall;
         onTriggered: updateHtml()
     }
 
