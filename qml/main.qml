@@ -215,6 +215,9 @@ ApplicationWindow {
             interactive: false
             WebEngineView {
                 id: webView
+                onContextMenuRequested: function(request) {
+                    request.accepted = true;
+                }
             }
             Loader {
                 id: helpViewLoader
@@ -222,6 +225,9 @@ ApplicationWindow {
                 sourceComponent: WebEngineView {
                     id: webHelpView
                     url: helpUrl
+                    onContextMenuRequested: function(request) {
+                        request.accepted = true;
+                    }
                 }
             }
         }
