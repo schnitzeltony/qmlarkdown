@@ -209,6 +209,7 @@ ApplicationWindow {
             }
             Loader {
                 id: helpViewLoader
+                active: false
                 sourceComponent: WebEngineView {
                     id: webHelpView
                     url: helpUrl
