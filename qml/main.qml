@@ -22,6 +22,9 @@ ApplicationWindow {
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
 
+    property bool showOnlineHelp: false
+    readonly property string helpUrl: "https://commonmark.org/help/"
+
     function updateHtml() {
         var styleHtml = 0
         switch(comboStyle.currentIndex) {
@@ -34,7 +37,7 @@ ApplicationWindow {
             break;
         }
 
-        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), "")
+        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), baseUri.text)
         qtLabelView.text = CMark.stringToHtml(0, textIn.text, styleHtml)
     }
 
@@ -78,7 +81,7 @@ ApplicationWindow {
             }
         }
         Rectangle {
-            id: htmlTools
+            id: htmlToolBar
             anchors.top: parent.top
             anchors.right: parent.right
             height: 50
@@ -89,6 +92,25 @@ ApplicationWindow {
                 Item { // just margin
                     width: 2
                 }
+                Button {
+                    font.family: "Font Awesome 5 Free"
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
+                    Layout.preferredWidth: height
+                    onPressed: !showOnlineHelp ? updateHtml() : helpViewLoader.item.url = helpUrl
+                }
+                Item { // just margin
+                    width: 5
+                }
+                Label {
+                    text: qsTr("Base URL:")
+                    color: "white"
+                }
+                TextField {
+                    id: baseUri
+                    Layout.fillWidth: true
+                    onTextChanged: updateHtml()
+                }
                 ComboBox {
                     id: comboStyle
                     model: styleStrings
@@ -96,30 +118,49 @@ ApplicationWindow {
                 }
                 Button {
                     font.family: "Font Awesome 5 Free"
-                    font.pointSize: 18
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_image)
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(!showOnlineHelp ? FA_SOLID.fa_solid_900_question : FA_SOLID.fa_solid_900_backward)
+                    Layout.preferredWidth: height
+                    onPressed: {
+                        // Keep help view once loaded
+                        helpViewLoader.active = true
+                        showOnlineHelp = !showOnlineHelp
+                    }
                 }
                 Item { // just margin
-                    Layout.fillWidth: true
+                    width: 2
                 }
             }
         }
 
         Label {
             id: qtLabelView
-            anchors.top: htmlTools.bottom
+            anchors.top: htmlToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
-            visible: showQtLabelBox
+            visible: showQtLabelBox && !showOnlineHelp
         }
-        WebEngineView {
-            id: webView
-            anchors.top: htmlTools.bottom
+        SwipeView {
+            id: swipeHtml
+            anchors.top: htmlToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
-            visible: !showQtLabelBox
+            clip: true
+            currentIndex: showOnlineHelp ? 1 : 0
+            visible: !showQtLabelBox || showOnlineHelp
+            interactive: false
+            WebEngineView {
+                id: webView
+            }
+            Loader {
+                id: helpViewLoader
+                sourceComponent: WebEngineView {
+                    id: webHelpView
+                    url: helpUrl
+                }
+            }
         }
     }
 
