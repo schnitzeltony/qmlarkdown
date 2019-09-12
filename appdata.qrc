@@ -3,6 +3,10 @@
         <file>qml/main.qml</file>
     </qresource>
     <qresource prefix="/">
+        <file>fa-js-wrapper/fa-solid-900.js</file>
+        <file>Font-Awesome/webfonts/fa-solid-900.ttf</file>
+    </qresource>
+    <qresource prefix="/">
         <file>github-markdown-css/github-markdown.css</file>
         <file>styles/common-footer</file>
         <file>styles/common-header</file>
