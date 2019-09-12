@@ -26,6 +26,7 @@ ApplicationWindow {
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
+    property int lastCursorPosition: 0
 
     function updateHtml() {
         var styleHtml = 0
@@ -41,6 +42,21 @@ ApplicationWindow {
 
         webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), baseUrl.text)
         qtLabelView.text = CMark.stringToHtml(0, textIn.text, styleHtml)
+        lastCursorPosition = 0
+        findSelection()
+    }
+    function findSelection() {
+        if(textIn.text.length > 0 && !userInputTimer.running && !userMoveCursorTimer.running) {
+            var pos = textIn.cursorPosition
+            var findFlags
+            if(pos > lastCursorPosition) {
+                findFlags = WebEngineView.FindCaseSensitively
+            }
+            else {
+                findFlags = WebEngineView.FindBackward | WebEngineView.FindCaseSensitively
+            }
+            lastCursorPosition = pos
+        }
     }
 
     Settings {
@@ -62,6 +78,11 @@ ApplicationWindow {
         id: userInputTimer
         interval: settings.userActiveIntervall;
         onTriggered: updateHtml()
+    }
+    Timer {
+        id: userMoveCursorTimer
+        interval: settings.userActiveIntervall;
+        onTriggered: findSelection()
     }
 
     Flickable {
@@ -140,9 +161,8 @@ ApplicationWindow {
             TextArea {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
-                onTextChanged: {
-                    userInputTimer.restart()
-                }
+                onTextChanged: userInputTimer.restart()
+                onCursorPositionChanged: userMoveCursorTimer.restart()
             }
         }
         Rectangle {
