@@ -16,11 +16,12 @@ ApplicationWindow {
     width: 800
     height: 600
     visibility: "Maximized"
-    title: qsTr("Simple WYSIWYG CommonMark editor")
+    title: qsTr("Simple WYSIWYG MarkDown editor")
 
     // TODO: enum use here and for CMark
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
+    property var convertStrings: ["Cmark", "Sundown"]
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: "https://commonmark.org/help/"
@@ -64,8 +65,60 @@ ApplicationWindow {
             duration: 300
             id: flickableAnimation
         }
-        ScrollView {
+        Rectangle {
+            id: sourceToolBar
             anchors.top: parent.top
+            anchors.left: parent.left
+            height: 50
+            width: parent.width / 2
+            color: Material.background
+            RowLayout {
+                anchors.fill: parent
+                Item { // just margin
+                    width: 2
+                }
+                Button {
+                    font.family: "Font Awesome 5 Free"
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file)
+                    Layout.preferredWidth: height
+                }
+                Button {
+                    font.family: "Font Awesome 5 Free"
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_folder_open)
+                    Layout.preferredWidth: height
+                }
+                Button {
+                    font.family: "Font Awesome 5 Free"
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_save)
+                    Layout.preferredWidth: height
+                }
+                Button {
+                    font.family: "Font Awesome 5 Free"
+                    font.pointSize: 16
+                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file_pdf)
+                    Layout.preferredWidth: height
+                }
+                Item { // just margin
+                    Layout.fillWidth: true
+                }
+                Label {
+                    text: qsTr("Converter:")
+                    color: "white"
+                }
+                ComboBox {
+                    id: comboConver
+                    model: convertStrings
+                }
+                Item { // just margin
+                    width: 2
+                }
+            }
+        }
+        ScrollView {
+            anchors.top: sourceToolBar.bottom
             anchors.left: parent.left
             height: parent.height
             width: parent.width / 2
