@@ -29,11 +29,11 @@ set(SOURCES
     src/main.cpp
 )
 
-set(QML_SOURCES
+set(RESOURCES
     appdata.qrc
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${QML_SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Core
