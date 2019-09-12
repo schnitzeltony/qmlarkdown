@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(qmlarkup LANGUAGES CXX)
+project(qmlarkdown LANGUAGES CXX)
 set(PROJECT_VERSION "0.0.1")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
