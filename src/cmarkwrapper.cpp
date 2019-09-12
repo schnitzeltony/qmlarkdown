@@ -43,14 +43,14 @@ QString CMarkWrapper::stringToHtml(TreatParam paramAs, const QString &strIn, Out
   QString strHeaderName, strFooterName, strStyleName, strStyleFooterName;
   switch(outputStyle) {
     case StyleGithub:
-      strHeaderName = QStringLiteral(":/data/styles/github-header");
-      strFooterName = QStringLiteral(":/data/styles/common-footer");
-      strStyleName = QStringLiteral(":/data/github-markdown-css/github-markdown.css");
-      strStyleFooterName = QStringLiteral(":/data/styles/github-footer");
+      strHeaderName = QStringLiteral(":/styles/github-header");
+      strFooterName = QStringLiteral(":/styles/common-footer");
+      strStyleName = QStringLiteral(":/github-markdown-css/github-markdown.css");
+      strStyleFooterName = QStringLiteral(":/styles/github-footer");
       break;
     default:
-      strHeaderName = QStringLiteral(":/data/styles/common-header");
-      strFooterName = QStringLiteral(":/data/styles/common-footer");
+      strHeaderName = QStringLiteral(":/styles/common-header");
+      strFooterName = QStringLiteral(":/styles/common-footer");
       break;
   }
   QString strHeader;
