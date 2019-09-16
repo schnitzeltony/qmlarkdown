@@ -7,7 +7,7 @@ import QtWebEngine 1.8
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.0
 
-import CMark 1.0
+import MarkDownQt 1.0
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
@@ -110,7 +110,7 @@ ApplicationWindow {
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
-        var strHtml = CMark.stringToHtml(0, injText, styleHtml)
+        var strHtml = MarkDownQt.stringToHtml(0, injText, styleHtml)
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)

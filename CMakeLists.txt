@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.1)
 project(qmlarkdown LANGUAGES CXX)
 set(PROJECT_VERSION "0.0.1")
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
@@ -13,19 +12,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FeatureSummary)
 
 # Qt5 libs
-find_package(Qt5 COMPONENTS Core Qml Quick QuickControls2 WebEngine CONFIG REQUIRED COMPONENTS)
+find_package(Qt5 COMPONENTS Core Quick QuickControls2 WebEngine CONFIG REQUIRED COMPONENTS)
 
-# cmark lib
-find_package(PkgConfig REQUIRED)
-pkg_check_modules (CMARK REQUIRED libcmark>=0.28.3)
+# libmarkdown-qt
+find_package(MarkdownQt REQUIRED)
 
 # all sources by type
 set(HEADERS
-    src/cmarkwrapper.h
 )
 
 set(SOURCES
-    src/cmarkwrapper.cpp
     src/main.cpp
 )
 
@@ -51,7 +47,7 @@ target_link_libraries(qmlarkdown
         Qt5::Quick
         Qt5::QuickControls2
         Qt5::WebEngine
-        ${CMARK_LIBRARIES}
+        MarkdownQt::MarkdownQt
 )
 
 # install application
