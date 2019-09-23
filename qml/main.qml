@@ -23,6 +23,7 @@ ApplicationWindow {
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
     property var convertStrings: ["Cmark", "Sundown"]
+    // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
