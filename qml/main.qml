@@ -153,8 +153,8 @@ ApplicationWindow {
         }
         ScrollView {
             anchors.top: sourceToolBar.bottom
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
-            height: parent.height
             width: parent.width / 2
             padding: 8
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
