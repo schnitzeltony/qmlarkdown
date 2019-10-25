@@ -23,11 +23,47 @@ ApplicationWindow {
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
     property var convertStrings: ["Cmark", "Sundown"]
+    property string strTagInjected: ""
+    property bool bScrollTop: false
     // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
-    property int lastCursorPosition: 0
+
+    function findAnchorInjectPosition(text, pos) {
+        var validPosFound = false
+        var lastLineEnd
+        var lineEnd
+        do {
+            lastLineEnd = text.lastIndexOf("\n", pos);
+            lineEnd = text.indexOf("\n", pos);
+            if(lastLineEnd < lineEnd) {
+                var strLine =  text.substring(lastLineEnd+1, lineEnd)
+                // we cannot appand our anchor at special lines (TODO add more?)
+                var blackList = ['---','```'];
+                validPosFound = true
+                blackList.forEach(function(item, index, array) {
+                    var blackPos = text.indexOf(item, lastLineEnd+1)
+                    if(blackPos === lastLineEnd+1) {
+                        validPosFound = false
+                    }
+                })
+            }
+            if(!validPosFound && lastLineEnd > 0) {
+                pos = lastLineEnd-1
+            }
+        } while (!validPosFound && lastLineEnd > 0)
+        // top position?
+        if(lastLineEnd < 0) {
+            lineEnd = 0
+            validPosFound = true
+        }
+        // no matching line found
+        if(!validPosFound) {
+            lineEnd = -1
+        }
+        return lineEnd
+    }
 
     function updateHtml() {
         var styleHtml = 0
@@ -41,27 +77,47 @@ ApplicationWindow {
             break;
         }
 
+        // reset worker properties
+        window.bScrollTop = false
+        window.strTagInjected = ""
+
+        // inject id tag for auto scroll at the end of previous line
+        var pos = textIn.cursorPosition
+        var text = textIn.text
+        var lineEnd = findAnchorInjectPosition(text, pos)
+        if(lineEnd > 0) {
+            pos = text.lastIndexOf("\n", lineEnd-1);
+            lineEnd = findAnchorInjectPosition(text, pos)
+        }
+        var injText
+        var strTag = 'o2_ueala5b9aiii'
+        var idStr = '<a id="' + strTag  + '"></a>'
+        if(lineEnd > 0) {
+            var txtLead = text.substring(0, lineEnd)
+            var txtTrail = text.substring(lineEnd)
+            injText = txtLead + " " + idStr + txtTrail
+            window.strTagInjected = strTag
+        }
+        else {
+            injText = text
+            if(lineEnd === 0) {
+                window.bScrollTop = true
+            }
+        }
+
         var strBaseUrl = baseUrl.text
+        // append trailing '/'
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
-        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), strBaseUrl)
-        qtLabelView.text = CMark.stringToHtml(0, textIn.text, styleHtml)
-        lastCursorPosition = 0
-        findSelection()
-    }
-    function findSelection() {
-        if(textIn.text.length > 0 && !userInputTimer.running && !userMoveCursorTimer.running) {
-            var pos = textIn.cursorPosition
-            var findFlags
-            if(pos > lastCursorPosition) {
-                findFlags = WebEngineView.FindCaseSensitively
-            }
-            else {
-                findFlags = WebEngineView.FindBackward | WebEngineView.FindCaseSensitively
-            }
-            lastCursorPosition = pos
+        var strHtml = CMark.stringToHtml(0, injText, styleHtml)
+        // hack away quoted anchors
+        if(window.strTagInjected !== "") {
+            strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
         }
+        // load all our frames' contents
+        webView.loadHtml(strHtml, strBaseUrl)
+        qtLabelView.text = strHtml
     }
 
     Settings {
@@ -83,11 +139,6 @@ ApplicationWindow {
         id: userInputTimer
         interval: settings.userActiveIntervall;
         onTriggered: updateHtml()
-    }
-    Timer {
-        id: userMoveCursorTimer
-        interval: settings.userActiveIntervall;
-        onTriggered: findSelection()
     }
 
     Flickable {
@@ -167,7 +218,7 @@ ApplicationWindow {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
                 onTextChanged: userInputTimer.restart()
-                onCursorPositionChanged: userMoveCursorTimer.restart()
+                onCursorPositionChanged: userInputTimer.restart()
             }
         }
         Rectangle {
@@ -245,6 +296,17 @@ ApplicationWindow {
                 id: webView
                 onContextMenuRequested: function(request) {
                     request.accepted = true;
+                }
+                onLoadingChanged: function(loadRequest) {
+                    if(loadRequest.errorCode === 0 &&
+                            loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                        if(window.bScrollTop) {
+                            runJavaScript('document.body.scrollTop = 0; document.documentElement.scrollTop = 0;')
+                        }
+                        else if (window.strTagInjected !== '') {
+                            runJavaScript('document.getElementById("' + strTagInjected +'").scrollIntoView(true);')
+                        }
+                    }
                 }
             }
             Loader {
