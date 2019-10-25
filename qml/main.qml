@@ -41,7 +41,11 @@ ApplicationWindow {
             break;
         }
 
-        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), baseUrl.text)
+        var strBaseUrl = baseUrl.text
+        if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
+            strBaseUrl += "/"
+        }
+        webView.loadHtml(CMark.stringToHtml(0, textIn.text, styleHtml), strBaseUrl)
         qtLabelView.text = CMark.stringToHtml(0, textIn.text, styleHtml)
         lastCursorPosition = 0
         findSelection()
