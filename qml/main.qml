@@ -76,6 +76,13 @@ ApplicationWindow {
             styleHtml = 1
             break;
         }
+        var typeConvert = 0
+        switch(comboConvert.currentIndex) {
+        case 0:
+            break;
+        case 1:  // sundown
+            typeConvert = 1
+        }
 
         // reset worker properties
         window.bScrollTop = false
@@ -110,7 +117,7 @@ ApplicationWindow {
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
-        var strHtml = MarkDownQt.stringToHtml(0, injText, styleHtml)
+        var strHtml = MarkDownQt.stringToHtml(0, injText, typeConvert, styleHtml)
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
@@ -200,6 +207,7 @@ ApplicationWindow {
                 ComboBox {
                     id: comboConvert
                     model: convertStrings
+                    onCurrentIndexChanged: updateHtml()
                 }
                 Item { // just margin
                     width: 2
