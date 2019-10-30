@@ -33,14 +33,30 @@ set(RESOURCES
     appdata.qrc
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES})
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt5::Core
-    Qt5::Quick
-    Qt5::QuickControls2
-    Qt5::WebEngine
-    ${CMARK_LIBRARIES}
+# our application
+add_executable(qmlarkdown
+    ${SOURCES} ${HEADERS} ${RESOURCES}
+)
+
+# some target magic added by qtcreator
+target_compile_definitions(qmlarkdown
+    PRIVATE
+        $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+)
+
+# dependencies
+target_link_libraries(qmlarkdown
+    PRIVATE
+        Qt5::Core
+        Qt5::Quick
+        Qt5::QuickControls2
+        Qt5::WebEngine
+        ${CMARK_LIBRARIES}
+)
+
+# install application
+install(TARGETS qmlarkdown
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 # Display feature summary
