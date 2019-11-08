@@ -22,7 +22,7 @@ ApplicationWindow {
     // TODO: enum use here and for CMark
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
-    property var convertStrings: ["Cmark", "Sundown"]
+    property var convertStrings: MarkDownQt.availableConverters(0,1) // md -> html
     property string strTagInjected: ""
     property bool bScrollTop: false
     // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
@@ -76,13 +76,6 @@ ApplicationWindow {
             styleHtml = 1
             break;
         }
-        var typeConvert = 0
-        switch(comboConvert.currentIndex) {
-        case 0:
-            break;
-        case 1:  // sundown
-            typeConvert = 1
-        }
 
         // reset worker properties
         window.bScrollTop = false
@@ -112,12 +105,25 @@ ApplicationWindow {
             }
         }
 
+        // baseUrl
         var strBaseUrl = baseUrl.text
         // append trailing '/'
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
-        var strHtml = MarkDownQt.stringToHtml(0, injText, typeConvert, styleHtml)
+        // convert
+        var strHtml = MarkDownQt.doConvert(injText, comboConvert.currentText, MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
+        // prepend style
+        if(comboStyle.currentText === qsTr("Github Style")) {
+            strHtml = MarkDownQt.doConvert(strHtml, "github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml)
+        }
+        // framing (header / footer)
+        if(comboStyle.currentText === qsTr("Github Style")) {
+            strHtml = MarkDownQt.addFraming(strHtml, "github-markdown-css", MarkDownQt.FormatHtml)
+        }
+        else {
+            strHtml = MarkDownQt.addFraming(strHtml, comboConvert.currentText, MarkDownQt.FormatHtml)
+        }
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
