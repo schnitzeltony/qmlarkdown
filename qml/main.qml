@@ -20,8 +20,9 @@ ApplicationWindow {
     title: qsTr("Simple WYSIWYG MarkDown editor")
 
     // TODO: enum use here and for CMark
+    property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style"), qsTr("HTML source")]
     property bool showQtLabelBox: comboStyle.currentIndex === 1
-    property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
+    property bool showHtmlSourceBox: comboStyle.currentIndex === 3
     property string strTagInjected: ""
     property bool bScrollTop: false
     // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
@@ -65,17 +66,6 @@ ApplicationWindow {
     }
 
     function updateHtml() {
-        var styleHtml = 0
-        switch(comboStyle.currentIndex) {
-        case 0: // default
-            break;
-        case 1: // QLabel
-            break;
-        case 2: // github
-            styleHtml = 1
-            break;
-        }
-
         // reset worker properties
         window.bScrollTop = false
         window.strTagInjected = ""
@@ -112,14 +102,14 @@ ApplicationWindow {
         }
         // convert
         var currentConvert = comboConvert.model[comboConvert.currentIndex]
-        var currentStyle = comboStyle.model[comboStyle.currentIndex]
         var strHtml = MarkDownQt.doConvert(injText, currentConvert, MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
         // prepend style
-        if(currentStyle === qsTr("Github Style")) {
+        var githubStyle = comboStyle.currentIndex === 2
+        if(githubStyle) {
             strHtml = MarkDownQt.doConvert(strHtml, "github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml)
         }
         // framing (header / footer)
-        if(currentStyle === qsTr("Github Style")) {
+        if(githubStyle) {
             strHtml = MarkDownQt.addFraming(strHtml, "github-markdown-css", MarkDownQt.FormatHtml)
         }
         else {
@@ -132,6 +122,7 @@ ApplicationWindow {
         // load all our frames' contents
         webView.loadHtml(strHtml, strBaseUrl)
         qtLabelView.text = strHtml
+        htmlSourceView.text = strHtml
     }
 
     Settings {
@@ -168,6 +159,7 @@ ApplicationWindow {
             duration: 300
             id: flickableAnimation
         }
+        // Source toolbar
         Rectangle {
             id: sourceToolBar
             anchors.top: parent.top
@@ -221,6 +213,7 @@ ApplicationWindow {
                 }
             }
         }
+        // Source input
         ScrollView {
             anchors.top: sourceToolBar.bottom
             anchors.bottom: parent.bottom
@@ -236,6 +229,7 @@ ApplicationWindow {
                 onCursorPositionChanged: userInputTimer.restart()
             }
         }
+        // Toolbar converted
         Rectangle {
             id: htmlToolBar
             anchors.top: parent.top
@@ -288,7 +282,7 @@ ApplicationWindow {
                 }
             }
         }
-
+        // Qt label view
         Label {
             id: qtLabelView
             anchors.top: htmlToolBar.bottom
@@ -297,6 +291,22 @@ ApplicationWindow {
             width: parent.width / 2
             visible: showQtLabelBox && !showOnlineHelp
         }
+        // HtmlSource view
+        ScrollView {
+            anchors.top: htmlToolBar.bottom
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            width: parent.width / 2
+            visible: showHtmlSourceBox && !showOnlineHelp
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            TextArea {
+                id: htmlSourceView
+                readOnly: true
+                //wrapMode: TextEdit.NoWrap
+            }
+        }
+        // Html view
         SwipeView {
             id: swipeHtml
             anchors.top: htmlToolBar.bottom
@@ -305,7 +315,7 @@ ApplicationWindow {
             width: parent.width / 2
             clip: true
             currentIndex: showOnlineHelp ? 1 : 0
-            visible: !showQtLabelBox || showOnlineHelp
+            visible: (!showQtLabelBox && !showHtmlSourceBox) || showOnlineHelp
             interactive: false
             WebEngineView {
                 id: webView
