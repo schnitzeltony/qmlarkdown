@@ -22,7 +22,6 @@ ApplicationWindow {
     // TODO: enum use here and for CMark
     property bool showQtLabelBox: comboStyle.currentIndex === 1
     property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style")]
-    property var convertStrings: MarkDownQt.availableConverters(0,1) // md -> html
     property string strTagInjected: ""
     property bool bScrollTop: false
     // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
@@ -112,17 +111,19 @@ ApplicationWindow {
             strBaseUrl += "/"
         }
         // convert
-        var strHtml = MarkDownQt.doConvert(injText, comboConvert.currentText, MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
+        var currentConvert = comboConvert.model[comboConvert.currentIndex]
+        var currentStyle = comboStyle.model[comboStyle.currentIndex]
+        var strHtml = MarkDownQt.doConvert(injText, currentConvert, MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
         // prepend style
-        if(comboStyle.currentText === qsTr("Github Style")) {
+        if(currentStyle === qsTr("Github Style")) {
             strHtml = MarkDownQt.doConvert(strHtml, "github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml)
         }
         // framing (header / footer)
-        if(comboStyle.currentText === qsTr("Github Style")) {
+        if(currentStyle === qsTr("Github Style")) {
             strHtml = MarkDownQt.addFraming(strHtml, "github-markdown-css", MarkDownQt.FormatHtml)
         }
         else {
-            strHtml = MarkDownQt.addFraming(strHtml, comboConvert.currentText, MarkDownQt.FormatHtml)
+            strHtml = MarkDownQt.addFraming(strHtml, currentConvert, MarkDownQt.FormatHtml)
         }
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
@@ -212,7 +213,7 @@ ApplicationWindow {
                 }
                 ComboBox {
                     id: comboConvert
-                    model: convertStrings
+                    model: MarkDownQt.availableConverters(MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
                     onCurrentIndexChanged: updateHtml()
                 }
                 Item { // just margin
