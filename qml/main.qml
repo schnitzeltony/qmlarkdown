@@ -303,7 +303,8 @@ ApplicationWindow {
             TextArea {
                 id: htmlSourceView
                 readOnly: true
-                //wrapMode: TextEdit.NoWrap
+                wrapMode: Text.WordWrap
+                selectByMouse: true
             }
         }
         // Html view
