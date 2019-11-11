@@ -73,14 +73,19 @@ ApplicationWindow {
         // inject id tag for auto scroll at the end of previous line
         var pos = textIn.cursorPosition
         var text = textIn.text
-        var lineEnd = findAnchorInjectPosition(text, pos)
-        if(lineEnd > 0) {
-            pos = text.lastIndexOf("\n", lineEnd-1);
-            lineEnd = findAnchorInjectPosition(text, pos)
-        }
-        var injText
+        var lineEnd = 0
         var strTag = 'o2_ueala5b9aiii'
         var idStr = '<a id="' + strTag  + '"></a>'
+
+        // auto follow does not work on github
+        if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
+            lineEnd = findAnchorInjectPosition(text, pos)
+            if(lineEnd > 0) {
+                pos = text.lastIndexOf("\n", lineEnd-1);
+                lineEnd = findAnchorInjectPosition(text, pos)
+            }
+        }
+        var injText
         if(lineEnd > 0) {
             var txtLead = text.substring(0, lineEnd)
             var txtTrail = text.substring(lineEnd)
@@ -226,7 +231,12 @@ ApplicationWindow {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
                 onTextChanged: userInputTimer.restart()
-                onCursorPositionChanged: userInputTimer.restart()
+                onCursorPositionChanged: {
+                    // don't eat up our rate limit on github...
+                    if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
+                        userInputTimer.restart()
+                    }
+                }
             }
         }
         // Toolbar converted
