@@ -210,8 +210,12 @@ ApplicationWindow {
                 }
                 ComboBox {
                     id: comboConvert
+                    focus: true
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
-                    onCurrentIndexChanged: updateHtml()
+                    onCurrentIndexChanged: {
+                        updateHtml()
+                        textIn.forceActiveFocus()
+                    }
                 }
                 Item { // just margin
                     width: 2
@@ -230,6 +234,7 @@ ApplicationWindow {
             TextArea {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
+                selectByMouse: true
                 onTextChanged: userInputTimer.restart()
                 onCursorPositionChanged: {
                     // don't eat up our rate limit on github...
@@ -257,7 +262,10 @@ ApplicationWindow {
                     font.pointSize: 16
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
                     Layout.preferredWidth: height
-                    onPressed: !showOnlineHelp ? updateHtml() : helpViewLoader.item.url = helpUrl
+                    onPressed: {
+                        !showOnlineHelp ? updateHtml() : helpViewLoader.item.url = helpUrl
+                        textIn.forceActiveFocus()
+                    }
                 }
                 Item { // just margin
                     width: 5
@@ -274,7 +282,10 @@ ApplicationWindow {
                 ComboBox {
                     id: comboStyle
                     model: styleStrings
-                    onCurrentIndexChanged: updateHtml()
+                    onCurrentIndexChanged: {
+                        updateHtml()
+                        textIn.forceActiveFocus()
+                    }
                 }
                 Button {
                     font.family: "Font Awesome 5 Free"
