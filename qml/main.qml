@@ -119,13 +119,13 @@ ApplicationWindow {
         }
 
         // baseUrl
-        var strBaseUrl = baseUrl.text
+        var strBaseUrl = "file://" + projectPath.text
         // append trailing '/'
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
 
-        // convert
+        // convert MD -> HTML
         // Note: this might look odd but:
         // * HTML quirks are done most easily with UTF-8 encoded text
         // * convertToHtml expects javascript arraybuffer
@@ -145,7 +145,7 @@ ApplicationWindow {
     Settings {
         id: settings
         // interactive
-        property alias baseUrl: baseUrl.text
+        property alias projectPath: projectPath.text
         property alias style: comboStyle.currentIndex
         property alias convertType: comboConvert.currentIndex
         // non-interactive
@@ -313,13 +313,23 @@ ApplicationWindow {
                     width: 5
                 }
                 Label {
-                    text: qsTr("Base URL:")
+                    text: qsTr("Project Path:")
                     color: "white"
                 }
                 TextField {
-                    id: baseUrl
+                    id: projectPath
                     Layout.fillWidth: true
-                    onTextChanged: updateHtml()
+                    selectByMouse: true
+                    onTextChanged: {
+                        if(MarkDownQt.pathExists(text)) {
+                            color = "black"
+                            updateHtml()
+                        }
+                        else {
+                            color = "red"
+                        }
+
+                    }
                 }
                 ComboBox {
                     id: comboStyle
