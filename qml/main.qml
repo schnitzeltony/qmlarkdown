@@ -22,15 +22,26 @@ ApplicationWindow {
     visibility: "Maximized"
     title: qsTr("Simple WYSIWYG MarkDown editor")
 
-    // TODO: enum use here and for CMark
-    property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
-    property bool showQtLabelBox: comboStyle.currentIndex === 1
-    property bool showHtmlSourceBox: comboStyle.currentIndex === 3 || comboStyle.currentIndex === 4
+    readonly property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
+    function isQtLabelBoxVisible() {
+        return comboStyle.currentIndex === 1
+    }
+    function isHtmlSourceVisible() {
+        return comboStyle.currentIndex === 3 || comboStyle.currentIndex === 4
+    }
+    function isHtmlViewVisible() {
+        return comboStyle.currentIndex === 0 || comboStyle.currentIndex === 2
+    }
+    function isGithubStyle() {
+        return comboStyle.currentIndex === 2 || comboStyle.currentIndex === 4
+    }
+
     property string strTagInjected: ""
     property bool bScrollTop: false
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
+
 
     function findAnchorInjectPosition(text, pos) {
         var validPosFound = false
@@ -71,12 +82,12 @@ ApplicationWindow {
         var currentConvert = comboConvert.model[comboConvert.currentIndex]
         var dataHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataIn)
         // prepend style
-        var githubStyle = comboStyle.currentIndex === 2 || comboStyle.currentIndex === 4
-        if(githubStyle) {
+        var bGithubStyle = isGithubStyle()
+        if(bGithubStyle) {
             dataHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatHtmlUtf8, dataHtml)
         }
         // framing (header / footer)
-        if(githubStyle) {
+        if(bGithubStyle) {
             dataHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtmlUtf8, dataHtml)
         }
         else {
@@ -138,9 +149,15 @@ ApplicationWindow {
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
         }
         // load all our frames' contents
-        webView.loadHtml(strHtml, strBaseUrl)
-        qtLabelView.text = strHtml
-        htmlSourceView.text = strHtml
+        if(isHtmlViewVisible()) {
+            webView.loadHtml(strHtml, strBaseUrl)
+        }
+        if(isQtLabelBoxVisible()) {
+            qtLabelView.text = strHtml
+        }
+        if(isHtmlSourceVisible()) {
+            htmlSourceView.text = strHtml
+        }
     }
 
     function userActivityHandler() {
@@ -379,7 +396,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
-            visible: showQtLabelBox && !showOnlineHelp
+            visible: isQtLabelBoxVisible() && !showOnlineHelp
         }
         // HtmlSource view
         ScrollView {
@@ -387,7 +404,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
-            visible: showHtmlSourceBox && !showOnlineHelp
+            visible: isHtmlSourceVisible() && !showOnlineHelp
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             TextArea {
@@ -406,7 +423,7 @@ ApplicationWindow {
             width: parent.width / 2
             clip: true
             currentIndex: showOnlineHelp ? 1 : 0
-            visible: (!showQtLabelBox && !showHtmlSourceBox) || showOnlineHelp
+            visible: (!isQtLabelBoxVisible() && !isHtmlSourceVisible()) || showOnlineHelp
             interactive: false
             WebEngineView {
                 id: webView
