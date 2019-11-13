@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FeatureSummary)
 
 # Qt5 libs
-find_package(Qt5 COMPONENTS Core Quick QuickControls2 WebEngine CONFIG REQUIRED COMPONENTS)
+find_package(Qt5 COMPONENTS Core Widgets Quick QuickControls2 WebEngine CONFIG REQUIRED COMPONENTS)
 
 # libmarkdown-qt
 find_package(MarkdownQt REQUIRED)
@@ -44,6 +44,7 @@ target_compile_definitions(qmlarkdown
 target_link_libraries(qmlarkdown
     PRIVATE
         Qt5::Core
+        Qt5::Widgets
         Qt5::Quick
         Qt5::QuickControls2
         Qt5::WebEngine

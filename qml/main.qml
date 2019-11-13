@@ -6,6 +6,8 @@ import QtQuick.Controls.Material 2.12
 import QtWebEngine 1.8
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.0
+import Qt.labs.platform 1.0
+import QtQuick.Dialogs 1.3
 
 import MarkDownQt 1.0
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
@@ -25,7 +27,6 @@ ApplicationWindow {
     property bool showHtmlSourceBox: comboStyle.currentIndex === 3
     property string strTagInjected: ""
     property bool bScrollTop: false
-    // TODO: Qt 5.14 introduced QTextDocument::setMarkdown - add optional support later
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
@@ -63,6 +64,24 @@ ApplicationWindow {
             lineEnd = -1
         }
         return lineEnd
+    }
+
+    function convertToHtml(strIn) {
+        var currentConvert = comboConvert.model[comboConvert.currentIndex]
+        var strHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMd, MarkDownQt.FormatHtml, strIn)
+        // prepend style
+        var githubStyle = comboStyle.currentIndex === 2
+        if(githubStyle) {
+            strHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml, strHtml)
+        }
+        // framing (header / footer)
+        if(githubStyle) {
+            strHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtml, strHtml)
+        }
+        else {
+            strHtml = MarkDownQt.addFraming(currentConvert, MarkDownQt.FormatHtml, strHtml)
+        }
+        return strHtml
     }
 
     function updateHtml() {
@@ -105,21 +124,10 @@ ApplicationWindow {
         if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
             strBaseUrl += "/"
         }
+
         // convert
-        var currentConvert = comboConvert.model[comboConvert.currentIndex]
-        var strHtml = MarkDownQt.doConvert(injText, currentConvert, MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
-        // prepend style
-        var githubStyle = comboStyle.currentIndex === 2
-        if(githubStyle) {
-            strHtml = MarkDownQt.doConvert(strHtml, "github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml)
-        }
-        // framing (header / footer)
-        if(githubStyle) {
-            strHtml = MarkDownQt.addFraming(strHtml, "github-markdown-css", MarkDownQt.FormatHtml)
-        }
-        else {
-            strHtml = MarkDownQt.addFraming(strHtml, currentConvert, MarkDownQt.FormatHtml)
-        }
+        var strHtml = convertToHtml(injText)
+
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
@@ -200,6 +208,9 @@ ApplicationWindow {
                     font.pointSize: 16
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file_pdf)
                     Layout.preferredWidth: height
+                    onPressed: {
+                        textIn.tryExportPdf()
+                    }
                 }
                 Item { // just margin
                     Layout.fillWidth: true
@@ -240,6 +251,33 @@ ApplicationWindow {
                     // don't eat up our rate limit on github...
                     if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
                         userInputTimer.restart()
+                    }
+                }
+                function tryExportPdf() {
+                    pdfFileDialog.open()
+                }
+                FileDialog {
+                    id: pdfFileDialog
+                    selectExisting: false
+                    selectMultiple: false
+                    folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+                    title: qsTr("PDF export")
+                    nameFilters: [ qsTr("PDF files (*.pdf)"), qsTr("All files (*)") ]
+                    //defaultSuffix: "pdf" // not declared??
+                    onAccepted: {
+                        var strHtml = convertToHtml(textIn.text)
+                        var fileName = fileUrls[0];
+                        // defaultSuffix got lost somehow ??
+                        if(!fileName.endsWith(".pdf")) {
+                            fileName += ".pdf"
+                        }
+                        if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtml, MarkDownQt.FormatPdf, strHtml, fileName)) {
+                            console.log("PDF " + fileName + "created")
+                        }
+                        else {
+                            console.error()("PDF " + fileName + "not created!")
+                        }
+
                     }
                 }
             }
