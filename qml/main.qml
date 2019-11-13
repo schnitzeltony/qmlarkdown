@@ -158,8 +158,8 @@ ApplicationWindow {
         property alias convertType: comboConvert.currentIndex
         // non-interactive
         property string helpUrl: "https://commonmark.org/help/"
-        property int userActiveIntervall: 200
-        property int minUpdateIntervall: 500
+        property int userActiveIntervall: 100
+        property int minUpdateIntervall: 300
     }
 
     FontLoader {
