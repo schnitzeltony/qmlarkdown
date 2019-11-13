@@ -19,10 +19,12 @@ find_package(MarkdownQt REQUIRED)
 
 # all sources by type
 set(HEADERS
+    qthelper.h
 )
 
 set(SOURCES
     src/main.cpp
+    qthelper.cpp
 )
 
 set(RESOURCES
@@ -32,6 +34,10 @@ set(RESOURCES
 # our application
 add_executable(qmlarkdown
     ${SOURCES} ${HEADERS} ${RESOURCES}
+)
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # some target magic added by qtcreator

@@ -1,8 +1,10 @@
+#include "qthelper.h"
+#include <markdown-qt.h>
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QtWebEngine>
-#include <markdown-qt.h>
+
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +21,7 @@ int main(int argc, char *argv[])
 
     // register CMarkDownQt as singleton
     CMarkDownQt::registerQML();
+    QtHelper::registerQML();
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

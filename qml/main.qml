@@ -10,6 +10,7 @@ import Qt.labs.platform 1.0
 import QtQuick.Dialogs 1.3
 
 import MarkDownQt 1.0
+import QtHelper 1.0
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
@@ -130,7 +131,7 @@ ApplicationWindow {
         // * HTML quirks are done most easily with UTF-8 encoded text
         // * convertToHtml expects javascript arraybuffer
         // => convert back & forth
-        var strHtml = MarkDownQt.utf8DataToStr(convertToHtml(MarkDownQt.strToUtf8Data(injText)))
+        var strHtml = QtHelper.utf8DataToStr(convertToHtml(QtHelper.strToUtf8Data(injText)))
 
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
@@ -274,7 +275,7 @@ ApplicationWindow {
                         if(!fileName.endsWith(".pdf")) {
                             fileName += ".pdf"
                         }
-                        var dataHtml = convertToHtml(MarkDownQt.strToUtf8Data(textIn.text))
+                        var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
                         if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
                             console.log("PDF " + fileName + "created")
                         }
@@ -321,7 +322,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     selectByMouse: true
                     onTextChanged: {
-                        if(MarkDownQt.pathExists(text)) {
+                        if(QtHelper.pathExists(text)) {
                             color = "black"
                             updateHtml()
                         }
