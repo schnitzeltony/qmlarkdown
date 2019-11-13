@@ -143,6 +143,13 @@ ApplicationWindow {
         htmlSourceView.text = strHtml
     }
 
+    function userActivityHandler() {
+        userInputTimer.restart()
+        if(!minUpdateTimer.running) {
+            minUpdateTimer.start()
+        }
+    }
+
     Settings {
         id: settings
         // interactive
@@ -151,7 +158,8 @@ ApplicationWindow {
         property alias convertType: comboConvert.currentIndex
         // non-interactive
         property string helpUrl: "https://commonmark.org/help/"
-        property int userActiveIntervall: 300
+        property int userActiveIntervall: 200
+        property int minUpdateIntervall: 500
     }
 
     FontLoader {
@@ -160,8 +168,16 @@ ApplicationWindow {
 
     Timer {
         id: userInputTimer
-        interval: settings.userActiveIntervall;
+        interval: settings.userActiveIntervall
         onTriggered: updateHtml()
+    }
+    Timer {
+        id: minUpdateTimer
+        interval: settings.minUpdateIntervall
+        onTriggered: {
+            userInputTimer.stop()
+            updateHtml()
+        }
     }
 
     Flickable {
@@ -251,11 +267,11 @@ ApplicationWindow {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
                 selectByMouse: true
-                onTextChanged: userInputTimer.restart()
+                onTextChanged: userActivityHandler()
                 onCursorPositionChanged: {
                     // don't eat up our rate limit on github...
                     if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-                        userInputTimer.restart()
+                        userActivityHandler()
                     }
                 }
                 function tryExportPdf() {
