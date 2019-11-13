@@ -40,13 +40,13 @@ ApplicationWindow {
             lastLineEnd = text.lastIndexOf("\n", pos);
             lineEnd = text.indexOf("\n", pos);
             if(lastLineEnd < lineEnd) {
-                var strLine =  text.substring(lastLineEnd+1, lineEnd)
-                // we cannot appand our anchor at special lines (TODO add more?)
+                var strLine =  text.substring(lastLineEnd+1, lineEnd).trim()
+                // we cannot append our anchor at special lines (TODO add more?)
                 var blackList = ['---','```'];
                 validPosFound = true
                 blackList.forEach(function(item, index, array) {
-                    var blackPos = text.indexOf(item, lastLineEnd+1)
-                    if(blackPos === lastLineEnd+1) {
+                    var blackPos = strLine.indexOf(item)
+                    if(blackPos === 0) {
                         validPosFound = false
                     }
                 })
@@ -133,8 +133,8 @@ ApplicationWindow {
         // => convert back & forth
         var strHtml = QtHelper.utf8DataToStr(convertToHtml(QtHelper.strToUtf8Data(injText)))
 
-        // hack away quoted anchors
         if(window.strTagInjected !== "") {
+            // hack away quoted anchors
             strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
         }
         // load all our frames' contents
