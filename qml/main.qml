@@ -22,9 +22,9 @@ ApplicationWindow {
     title: qsTr("Simple WYSIWYG MarkDown editor")
 
     // TODO: enum use here and for CMark
-    property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github Style"), qsTr("HTML source")]
+    property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
     property bool showQtLabelBox: comboStyle.currentIndex === 1
-    property bool showHtmlSourceBox: comboStyle.currentIndex === 3
+    property bool showHtmlSourceBox: comboStyle.currentIndex === 3 || comboStyle.currentIndex === 4
     property string strTagInjected: ""
     property bool bScrollTop: false
 
@@ -66,22 +66,22 @@ ApplicationWindow {
         return lineEnd
     }
 
-    function convertToHtml(strIn) {
+    function convertToHtml(dataIn) {
         var currentConvert = comboConvert.model[comboConvert.currentIndex]
-        var strHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMd, MarkDownQt.FormatHtml, strIn)
+        var dataHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataIn)
         // prepend style
-        var githubStyle = comboStyle.currentIndex === 2
+        var githubStyle = comboStyle.currentIndex === 2 || comboStyle.currentIndex === 4
         if(githubStyle) {
-            strHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtml, MarkDownQt.FormatHtml, strHtml)
+            dataHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatHtmlUtf8, dataHtml)
         }
         // framing (header / footer)
         if(githubStyle) {
-            strHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtml, strHtml)
+            dataHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtmlUtf8, dataHtml)
         }
         else {
-            strHtml = MarkDownQt.addFraming(currentConvert, MarkDownQt.FormatHtml, strHtml)
+            dataHtml = MarkDownQt.addFraming(currentConvert, MarkDownQt.FormatHtmlUtf8, dataHtml)
         }
-        return strHtml
+        return dataHtml
     }
 
     function updateHtml() {
@@ -126,7 +126,11 @@ ApplicationWindow {
         }
 
         // convert
-        var strHtml = convertToHtml(injText)
+        // Note: this might look odd but:
+        // * HTML quirks are done most easily with UTF-8 encoded text
+        // * convertToHtml expects javascript arraybuffer
+        // => convert back & forth
+        var strHtml = MarkDownQt.utf8DataToStr(convertToHtml(MarkDownQt.strToUtf8Data(injText)))
 
         // hack away quoted anchors
         if(window.strTagInjected !== "") {
@@ -222,7 +226,7 @@ ApplicationWindow {
                 ComboBox {
                     id: comboConvert
                     focus: true
-                    model: MarkDownQt.availableConverters(MarkDownQt.FormatMd, MarkDownQt.FormatHtml)
+                    model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
                         updateHtml()
                         textIn.forceActiveFocus()
@@ -265,13 +269,13 @@ ApplicationWindow {
                     nameFilters: [ qsTr("PDF files (*.pdf)"), qsTr("All files (*)") ]
                     //defaultSuffix: "pdf" // not declared??
                     onAccepted: {
-                        var strHtml = convertToHtml(textIn.text)
                         var fileName = fileUrls[0];
                         // defaultSuffix got lost somehow ??
                         if(!fileName.endsWith(".pdf")) {
                             fileName += ".pdf"
                         }
-                        if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtml, MarkDownQt.FormatPdf, strHtml, fileName)) {
+                        var dataHtml = convertToHtml(MarkDownQt.strToUtf8Data(textIn.text))
+                        if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
                             console.log("PDF " + fileName + "created")
                         }
                         else {
