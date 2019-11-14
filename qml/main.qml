@@ -172,7 +172,6 @@ ApplicationWindow {
         // interactive
         property alias projectPath: projectPath.text
         property alias style: comboStyle.currentIndex
-        property alias convertType: comboConvert.currentIndex
         // non-interactive
         property string helpUrl: "https://commonmark.org/help/"
         property int userActiveIntervall: 100
