@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.5
+import QtQuick.Controls 2.12
 import QtQuick.VirtualKeyboard 2.4
 import QtQuick.Window 2.12
 import QtQuick.Controls.Material 2.12
@@ -280,11 +280,13 @@ ApplicationWindow {
             padding: 8
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            clip: true
             TextArea {
                 id: textIn
                 wrapMode: TextEdit.NoWrap
                 selectByMouse: true
                 onTextChanged: userActivityHandler()
+                cursorDelegate: inputCursorDelegate
                 onCursorPositionChanged: {
                     // don't eat up our rate limit on github...
                     if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
@@ -293,6 +295,27 @@ ApplicationWindow {
                 }
                 function tryExportPdf() {
                     pdfFileDialog.open()
+                }
+                // custom cursor
+                Component {
+                    id: inputCursorDelegate
+                    Rectangle {
+                        height: textIn.cursorRectangle.height
+                        width: 2;
+                        color: "black";
+                        visible: parent.cursorVisible
+                        SequentialAnimation on opacity { running: true; loops: Animation.Infinite
+                            NumberAnimation { to: 0; duration: 300 }
+                            NumberAnimation { to: 1; duration: 300 }
+                        }
+                    }
+                }
+                Rectangle {
+                    y: textIn.cursorRectangle.y
+                    height: textIn.cursorRectangle.height
+                    width: textIn.width
+                    opacity: 0.05
+                    color: "#1b1f23"
                 }
                 FileDialog {
                     id: pdfFileDialog
@@ -412,6 +435,7 @@ ApplicationWindow {
                 readOnly: true
                 wrapMode: Text.WordWrap
                 selectByMouse: true
+                selectByKeyboard: true
             }
         }
         // Html view
