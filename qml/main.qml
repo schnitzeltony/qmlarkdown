@@ -313,7 +313,9 @@ ApplicationWindow {
                 Rectangle {
                     y: textIn.cursorRectangle.y
                     height: textIn.cursorRectangle.height
-                    width: textIn.width
+                    width: textIn.width - 16
+                    anchors.left: textIn.left
+                    anchors.leftMargin: 8
                     opacity: 0.05
                     color: "#1b1f23"
                 }
