@@ -171,6 +171,7 @@ ApplicationWindow {
         id: settings
         // interactive
         property alias projectPath: projectPath.text
+        property alias convertType: comboConvert.currentIndex
         property alias style: comboStyle.currentIndex
         // non-interactive
         property string helpUrl: "https://commonmark.org/help/"
