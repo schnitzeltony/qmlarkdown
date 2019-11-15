@@ -247,6 +247,7 @@ ApplicationWindow {
                     Layout.preferredWidth: height
                     onPressed: {
                         textIn.tryExportPdf()
+                        textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
