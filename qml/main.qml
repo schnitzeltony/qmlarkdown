@@ -111,9 +111,11 @@ ApplicationWindow {
         // auto follow does not work on github
         if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
             lineEnd = findAnchorInjectPosition(text, pos)
-            if(lineEnd > 0) {
+            var linesUp = settings.autoScrollTopLinesMargin+1
+            while(lineEnd > 0 && linesUp > 0) {
                 pos = text.lastIndexOf("\n", lineEnd-1);
                 lineEnd = findAnchorInjectPosition(text, pos)
+                linesUp--
             }
         }
         var injText
@@ -174,6 +176,7 @@ ApplicationWindow {
         property alias convertType: comboConvert.currentIndex
         property alias style: comboStyle.currentIndex
         // non-interactive
+        property int autoScrollTopLinesMargin: 0
         property string helpUrl: "https://commonmark.org/help/"
         property int userActiveIntervall: 100
         property int minUpdateIntervall: 300
