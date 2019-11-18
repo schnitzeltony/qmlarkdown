@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
     QQmlApplicationEngine engine;
 
-    // register CMarkDownQt as singleton
+    CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
 
