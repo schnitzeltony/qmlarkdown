@@ -96,7 +96,7 @@ ApplicationWindow {
         return dataHtml
     }
 
-    function updateHtml() {
+    function _updateHtml() {
         // reset worker properties
         window.bScrollTop = false
         window.strTagInjected = ""
@@ -189,14 +189,17 @@ ApplicationWindow {
     Timer {
         id: userInputTimer
         interval: settings.userActiveIntervall
-        onTriggered: updateHtml()
+        onTriggered: {
+            minUpdateTimer.stop()
+            _updateHtml()
+        }
     }
     Timer {
         id: minUpdateTimer
         interval: settings.minUpdateIntervall
         onTriggered: {
             userInputTimer.stop()
-            updateHtml()
+            _updateHtml()
         }
     }
 
@@ -266,7 +269,7 @@ ApplicationWindow {
                     focus: true
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
-                        updateHtml()
+                        userActivityHandler()
                         textIn.forceActiveFocus()
                     }
                 }
@@ -368,7 +371,7 @@ ApplicationWindow {
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
                     Layout.preferredWidth: height
                     onPressed: {
-                        !showOnlineHelp ? updateHtml() : helpViewLoader.item.url = helpUrl
+                        !showOnlineHelp ? userActivityHandler() : helpViewLoader.item.url = helpUrl
                         textIn.forceActiveFocus()
                     }
                 }
@@ -386,7 +389,7 @@ ApplicationWindow {
                     onTextChanged: {
                         if(QtHelper.pathExists(text)) {
                             color = "black"
-                            updateHtml()
+                            userActivityHandler()
                         }
                         else {
                             color = "red"
@@ -398,7 +401,7 @@ ApplicationWindow {
                     id: comboStyle
                     model: styleStrings
                     onCurrentIndexChanged: {
-                        updateHtml()
+                        userActivityHandler()
                         textIn.forceActiveFocus()
                     }
                 }
