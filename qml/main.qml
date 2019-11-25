@@ -11,6 +11,7 @@ import QtQuick.Dialogs 1.3
 
 import MarkDownQt 1.0
 import QtHelper 1.0
+import "qrc:/qml/controls" as CTRLS
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
@@ -291,7 +292,6 @@ ApplicationWindow {
                 }
                 ComboBox {
                     id: comboConvert
-                    focus: true
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
                         userActivityHandler()
@@ -304,52 +304,21 @@ ApplicationWindow {
             }
         }
         // Source input
-        ScrollView {
+        CTRLS.MdInput {
+            id: textIn
             anchors.top: sourceToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             width: parent.width / 2
-            padding: 8
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            clip: true
-            TextArea {
-                id: textIn
-                wrapMode: TextEdit.NoWrap
-                selectByMouse: true
-                onTextChanged: userActivityHandler()
-                cursorDelegate: inputCursorDelegate
-                onCursorPositionChanged: {
-                    // don't eat up our rate limit on github...
-                    if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-                        userActivityHandler()
-                    }
-                }
-                // custom cursor
-                Component {
-                    id: inputCursorDelegate
-                    Rectangle {
-                        height: textIn.cursorRectangle.height
-                        width: 2;
-                        color: "black";
-                        visible: parent.cursorVisible
-                        SequentialAnimation on opacity { running: true; loops: Animation.Infinite
-                            NumberAnimation { to: 0; duration: 300 }
-                            NumberAnimation { to: 1; duration: 300 }
-                        }
-                    }
-                }
-                Rectangle {
-                    y: textIn.cursorRectangle.y
-                    height: textIn.cursorRectangle.height
-                    width: textIn.width - 16
-                    anchors.left: textIn.left
-                    anchors.leftMargin: 8
-                    opacity: 0.05
-                    color: "#1b1f23"
+            onTextChanged: userActivityHandler()
+            onCursorPositionChanged: {
+                // don't eat up our rate limit on github...
+                if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
+                    userActivityHandler()
                 }
             }
         }
+
         // Toolbar converted
         Rectangle {
             id: htmlToolBar
