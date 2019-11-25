@@ -203,6 +203,31 @@ ApplicationWindow {
         }
     }
 
+    FileDialog {
+        id: pdfFileDialog
+        selectExisting: false
+        selectMultiple: false
+        folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        title: qsTr("PDF export")
+        nameFilters: [ qsTr("PDF files (*.pdf)"), qsTr("All files (*)") ]
+        //defaultSuffix: "pdf" // not declared??
+        onAccepted: {
+            var fileName = fileUrls[0];
+            // defaultSuffix got lost somehow ??
+            if(!fileName.endsWith(".pdf")) {
+                fileName += ".pdf"
+            }
+            var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
+            if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
+                console.log("PDF " + fileName + "created")
+            }
+            else {
+                console.error()("PDF " + fileName + "not created!")
+            }
+
+        }
+    }
+
     Flickable {
         Material.theme: Material.Dark
         id: mainFlickable
@@ -253,7 +278,7 @@ ApplicationWindow {
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file_pdf)
                     Layout.preferredWidth: height
                     onPressed: {
-                        textIn.tryExportPdf()
+                        pdfFileDialog.open()
                         textIn.forceActiveFocus()
                     }
                 }
@@ -300,9 +325,6 @@ ApplicationWindow {
                         userActivityHandler()
                     }
                 }
-                function tryExportPdf() {
-                    pdfFileDialog.open()
-                }
                 // custom cursor
                 Component {
                     id: inputCursorDelegate
@@ -325,30 +347,6 @@ ApplicationWindow {
                     anchors.leftMargin: 8
                     opacity: 0.05
                     color: "#1b1f23"
-                }
-                FileDialog {
-                    id: pdfFileDialog
-                    selectExisting: false
-                    selectMultiple: false
-                    folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
-                    title: qsTr("PDF export")
-                    nameFilters: [ qsTr("PDF files (*.pdf)"), qsTr("All files (*)") ]
-                    //defaultSuffix: "pdf" // not declared??
-                    onAccepted: {
-                        var fileName = fileUrls[0];
-                        // defaultSuffix got lost somehow ??
-                        if(!fileName.endsWith(".pdf")) {
-                            fileName += ".pdf"
-                        }
-                        var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
-                        if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
-                            console.log("PDF " + fileName + "created")
-                        }
-                        else {
-                            console.error()("PDF " + fileName + "not created!")
-                        }
-
-                    }
                 }
             }
         }
