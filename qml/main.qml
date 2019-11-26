@@ -220,10 +220,10 @@ ApplicationWindow {
             }
             var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
             if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
-                console.log("PDF " + fileName + "created")
+                console.log("PDF " + fileName + " created")
             }
             else {
-                console.error()("PDF " + fileName + "not created!")
+                console.error("PDF " + fileName + " not created!")
             }
 
         }
