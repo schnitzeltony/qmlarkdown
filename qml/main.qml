@@ -24,8 +24,24 @@ ApplicationWindow {
     visibility: "Maximized"
     title: qsTr("Simple WYSIWYG MarkDown editor")
 
+    Settings {
+        id: settings
+        // interactive
+        property alias projectPath: projectPath.text
+        property alias convertType: comboConvert.currentIndex
+        property alias style: comboStyle.currentIndex
+        // non-interactive
+        property int autoScrollTopLinesMargin: 0
+        property string helpUrl: "https://commonmark.org/help/"
+        property int userActiveIntervall: 100
+        property int minUpdateIntervall: 300
+    }
+
     HELPERS.MdToHtml {
         id: htmlHelper
+        projectPath: projectPath.text
+        userActiveIntervall: settings.userActiveIntervall
+        minUpdateIntervall: settings.minUpdateIntervall
     }
 
     readonly property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
@@ -47,92 +63,6 @@ ApplicationWindow {
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
-
-    function _updateHtml() {
-        // reset worker properties
-        window.bScrollTop = false
-        window.strTagInjected = ""
-
-        // inject id tag for auto scroll at the end of previous line
-        var pos = textIn.cursorPosition
-        var text = textIn.text
-        var lineEnd = 0
-        var strTag = 'o2_ueala5b9aiii'
-        var idStr = '<a id="' + strTag  + '"></a>'
-
-        // auto follow does not work on github
-        if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-            lineEnd = htmlHelper.findAnchorInjectPosition(text, pos)
-            var linesUp = settings.autoScrollTopLinesMargin+1
-            while(lineEnd > 0 && linesUp > 0) {
-                pos = text.lastIndexOf("\n", lineEnd-1);
-                lineEnd = htmlHelper.findAnchorInjectPosition(text, pos)
-                linesUp--
-            }
-        }
-        var injText
-        if(lineEnd > 0) {
-            var txtLead = text.substring(0, lineEnd)
-            var txtTrail = text.substring(lineEnd)
-            injText = txtLead + " " + idStr + txtTrail
-            window.strTagInjected = strTag
-        }
-        else {
-            injText = text
-            if(lineEnd === 0) {
-                window.bScrollTop = true
-            }
-        }
-
-        // baseUrl
-        var strBaseUrl = "file://" + projectPath.text
-        // append trailing '/'
-        if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
-            strBaseUrl += "/"
-        }
-
-        // convert MD -> HTML
-        // Note: this might look odd but:
-        // * HTML quirks are done most easily with UTF-8 encoded text
-        // * convertToHtml expects javascript arraybuffer
-        // => convert back & forth
-        var strHtml = QtHelper.utf8DataToStr(htmlHelper.convertToHtml(QtHelper.strToUtf8Data(injText), isGithubStyle()))
-
-        if(window.strTagInjected !== "") {
-            // hack away quoted anchors
-            strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
-        }
-        // load all our frames' contents
-        if(isHtmlViewVisible()) {
-            webView.loadHtml(strHtml, strBaseUrl)
-        }
-        if(isQtLabelBoxVisible()) {
-            qtLabelView.text = strHtml
-        }
-        if(isHtmlSourceVisible()) {
-            htmlSourceView.text = strHtml
-        }
-    }
-
-    function userActivityHandler() {
-        userInputTimer.restart()
-        if(!minUpdateTimer.running) {
-            minUpdateTimer.start()
-        }
-    }
-
-    Settings {
-        id: settings
-        // interactive
-        property alias projectPath: projectPath.text
-        property alias convertType: comboConvert.currentIndex
-        property alias style: comboStyle.currentIndex
-        // non-interactive
-        property int autoScrollTopLinesMargin: 0
-        property string helpUrl: "https://commonmark.org/help/"
-        property int userActiveIntervall: 100
-        property int minUpdateIntervall: 300
-    }
 
     FontLoader {
         source: "qrc:/Font-Awesome/webfonts/fa-solid-900.ttf"
