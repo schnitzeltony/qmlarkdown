@@ -12,6 +12,7 @@ import QtQuick.Dialogs 1.3
 import MarkDownQt 1.0
 import QtHelper 1.0
 import "qrc:/qml/controls" as CTRLS
+import "qrc:/qml/functionals" as FUNCTIONALS
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
@@ -22,6 +23,31 @@ ApplicationWindow {
     height: 600
     visibility: "Maximized"
     title: qsTr("Simple WYSIWYG MarkDown editor")
+
+    Settings {
+        id: settings
+        // interactive
+        property alias projectPath: projectPath.text
+        property alias convertType: comboConvert.currentIndex
+        property alias style: comboStyle.currentIndex
+        // non-interactive
+        property string helpUrl: "https://commonmark.org/help/"
+    }
+
+    FUNCTIONALS.MdHtmlConvMachine {
+        id: htmlConverter
+        projectPath: projectPath.text
+
+        // WebEngineView cannot bind Html content
+        onStrHtmlWithSearchTagChanged: {
+            var strBaseUrl = "file://" + projectPath.text
+            // append trailing '/'
+            if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
+                strBaseUrl += "/"
+            }
+            webView.loadHtml(strHtmlWithSearchTag, strBaseUrl)
+        }
+    }
 
     readonly property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
     function isQtLabelBoxVisible() {
@@ -36,172 +62,15 @@ ApplicationWindow {
     function isGithubStyle() {
         return comboStyle.currentIndex === 2 || comboStyle.currentIndex === 4
     }
-
-    property string strTagInjected: ""
-    property bool bScrollTop: false
+    function userMdActivity() {
+        htmlConverter.userMdActivity(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle(), textIn.cursorPosition)
+    }
 
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
 
-
-    function findAnchorInjectPosition(text, pos) {
-        var validPosFound = false
-        var lastLineEnd
-        var lineEnd
-        do {
-            lastLineEnd = text.lastIndexOf("\n", pos);
-            lineEnd = text.indexOf("\n", pos);
-            if(lastLineEnd < lineEnd) {
-                var strLine =  text.substring(lastLineEnd+1, lineEnd).trim()
-                // we cannot append our anchor at special lines (TODO add more?)
-                var blackList = ['---','```','***'];
-                validPosFound = true
-                blackList.forEach(function(item, index, array) {
-                    var blackPos = strLine.indexOf(item)
-                    if(blackPos === 0) {
-                        validPosFound = false
-                    }
-                })
-            }
-            if(!validPosFound && lastLineEnd > 0) {
-                pos = lastLineEnd-1
-            }
-        } while (!validPosFound && lastLineEnd > 0)
-        // top position?
-        if(lastLineEnd < 0) {
-            lineEnd = 0
-            validPosFound = true
-        }
-        // no matching line found
-        if(!validPosFound) {
-            lineEnd = -1
-        }
-        return lineEnd
-    }
-
-    function convertToHtml(dataIn) {
-        var currentConvert = comboConvert.model[comboConvert.currentIndex]
-        var dataHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataIn)
-        // prepend style
-        var bGithubStyle = isGithubStyle()
-        if(bGithubStyle) {
-            dataHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        // framing (header / footer)
-        if(bGithubStyle) {
-            dataHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        else {
-            dataHtml = MarkDownQt.addFraming(currentConvert, MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        return dataHtml
-    }
-
-    function _updateHtml() {
-        // reset worker properties
-        window.bScrollTop = false
-        window.strTagInjected = ""
-
-        // inject id tag for auto scroll at the end of previous line
-        var pos = textIn.cursorPosition
-        var text = textIn.text
-        var lineEnd = 0
-        var strTag = 'o2_ueala5b9aiii'
-        var idStr = '<a id="' + strTag  + '"></a>'
-
-        // auto follow does not work on github
-        if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-            lineEnd = findAnchorInjectPosition(text, pos)
-            var linesUp = settings.autoScrollTopLinesMargin+1
-            while(lineEnd > 0 && linesUp > 0) {
-                pos = text.lastIndexOf("\n", lineEnd-1);
-                lineEnd = findAnchorInjectPosition(text, pos)
-                linesUp--
-            }
-        }
-        var injText
-        if(lineEnd > 0) {
-            var txtLead = text.substring(0, lineEnd)
-            var txtTrail = text.substring(lineEnd)
-            injText = txtLead + " " + idStr + txtTrail
-            window.strTagInjected = strTag
-        }
-        else {
-            injText = text
-            if(lineEnd === 0) {
-                window.bScrollTop = true
-            }
-        }
-
-        // baseUrl
-        var strBaseUrl = "file://" + projectPath.text
-        // append trailing '/'
-        if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
-            strBaseUrl += "/"
-        }
-
-        // convert MD -> HTML
-        // Note: this might look odd but:
-        // * HTML quirks are done most easily with UTF-8 encoded text
-        // * convertToHtml expects javascript arraybuffer
-        // => convert back & forth
-        var strHtml = QtHelper.utf8DataToStr(convertToHtml(QtHelper.strToUtf8Data(injText)))
-
-        if(window.strTagInjected !== "") {
-            // hack away quoted anchors
-            strHtml = strHtml.replace('&lt;a id=&quot;'+strTag+'&quot;&gt;&lt;/a&gt;', idStr)
-        }
-        // load all our frames' contents
-        if(isHtmlViewVisible()) {
-            webView.loadHtml(strHtml, strBaseUrl)
-        }
-        if(isQtLabelBoxVisible()) {
-            qtLabelView.text = strHtml
-        }
-        if(isHtmlSourceVisible()) {
-            htmlSourceView.text = strHtml
-        }
-    }
-
-    function userActivityHandler() {
-        userInputTimer.restart()
-        if(!minUpdateTimer.running) {
-            minUpdateTimer.start()
-        }
-    }
-
-    Settings {
-        id: settings
-        // interactive
-        property alias projectPath: projectPath.text
-        property alias convertType: comboConvert.currentIndex
-        property alias style: comboStyle.currentIndex
-        // non-interactive
-        property int autoScrollTopLinesMargin: 0
-        property string helpUrl: "https://commonmark.org/help/"
-        property int userActiveIntervall: 100
-        property int minUpdateIntervall: 300
-    }
-
     FontLoader {
         source: "qrc:/Font-Awesome/webfonts/fa-solid-900.ttf"
-    }
-
-    Timer {
-        id: userInputTimer
-        interval: settings.userActiveIntervall
-        onTriggered: {
-            minUpdateTimer.stop()
-            _updateHtml()
-        }
-    }
-    Timer {
-        id: minUpdateTimer
-        interval: settings.minUpdateIntervall
-        onTriggered: {
-            userInputTimer.stop()
-            _updateHtml()
-        }
     }
 
     FileDialog {
@@ -218,7 +87,7 @@ ApplicationWindow {
             if(!fileName.endsWith(".pdf")) {
                 fileName += ".pdf"
             }
-            var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
+            var dataHtml = htmlConverter.convertToHtml(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle())
             if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
                 console.log("PDF " + fileName + " created")
             }
@@ -294,7 +163,7 @@ ApplicationWindow {
                     id: comboConvert
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
-                        userActivityHandler()
+                        userMdActivity()
                         textIn.forceActiveFocus()
                     }
                 }
@@ -310,12 +179,9 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             width: parent.width / 2
-            onTextChanged: userActivityHandler()
+            onTextChanged: userMdActivity()
             onCursorPositionChanged: {
-                // don't eat up our rate limit on github...
-                if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-                    userActivityHandler()
-                }
+                userMdActivity()
             }
         }
 
@@ -338,7 +204,7 @@ ApplicationWindow {
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
                     Layout.preferredWidth: height
                     onPressed: {
-                        !showOnlineHelp ? userActivityHandler() : helpViewLoader.item.url = helpUrl
+                        !showOnlineHelp ? userMdActivity() : helpViewLoader.item.url = helpUrl
                         textIn.forceActiveFocus()
                     }
                 }
@@ -356,7 +222,7 @@ ApplicationWindow {
                     onTextChanged: {
                         if(QtHelper.pathExists(text)) {
                             color = "black"
-                            userActivityHandler()
+                            userMdActivity()
                         }
                         else {
                             color = "red"
@@ -368,7 +234,7 @@ ApplicationWindow {
                     id: comboStyle
                     model: styleStrings
                     onCurrentIndexChanged: {
-                        userActivityHandler()
+                        userMdActivity()
                         textIn.forceActiveFocus()
                     }
                 }
@@ -396,8 +262,9 @@ ApplicationWindow {
             anchors.right: parent.right
             width: parent.width / 2
             visible: isQtLabelBoxVisible() && !showOnlineHelp
+            text: htmlConverter.strHtml
         }
-        // HtmlSource view
+        // HtmlSourceCode view
         ScrollView {
             anchors.top: htmlToolBar.bottom
             anchors.bottom: parent.bottom
@@ -412,6 +279,8 @@ ApplicationWindow {
                 wrapMode: Text.WordWrap
                 selectByMouse: true
                 selectByKeyboard: true
+                text: htmlConverter.strHtml
+                cursorPosition: htmlConverter.iHtmlPosition
             }
         }
         // Html view
@@ -433,11 +302,11 @@ ApplicationWindow {
                 onLoadingChanged: function(loadRequest) {
                     if(loadRequest.errorCode === 0 &&
                             loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                        if(window.bScrollTop) {
+                        if(htmlConverter.bScrollTop) {
                             runJavaScript('document.body.scrollTop = 0; document.documentElement.scrollTop = 0;')
                         }
-                        else if (window.strTagInjected !== '') {
-                            runJavaScript('document.getElementById("' + strTagInjected +'").scrollIntoView(true);')
+                        else if (htmlConverter.bSearchTagInjected) {
+                            runJavaScript('document.getElementById("' + htmlConverter.strSearchString +'").scrollIntoView(true);')
                         }
                     }
                 }

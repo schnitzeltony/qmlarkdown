@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>qml/main.qml</file>
         <file>qml/controls/MdInput.qml</file>
+        <file>qml/functionals/MdHtmlConvMachine.qml</file>
     </qresource>
     <qresource prefix="/">
         <file>fa-js-wrapper/fa-solid-900.js</file>
