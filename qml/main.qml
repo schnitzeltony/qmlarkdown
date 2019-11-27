@@ -12,6 +12,7 @@ import QtQuick.Dialogs 1.3
 import MarkDownQt 1.0
 import QtHelper 1.0
 import "qrc:/qml/controls" as CTRLS
+import "qrc:/qml/helpers" as HELPERS
 import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
@@ -22,6 +23,10 @@ ApplicationWindow {
     height: 600
     visibility: "Maximized"
     title: qsTr("Simple WYSIWYG MarkDown editor")
+
+    HELPERS.MdToHtml {
+        id: htmlHelper
+    }
 
     readonly property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
     function isQtLabelBoxVisible() {
@@ -43,60 +48,6 @@ ApplicationWindow {
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
 
-
-    function findAnchorInjectPosition(text, pos) {
-        var validPosFound = false
-        var lastLineEnd
-        var lineEnd
-        do {
-            lastLineEnd = text.lastIndexOf("\n", pos);
-            lineEnd = text.indexOf("\n", pos);
-            if(lastLineEnd < lineEnd) {
-                var strLine =  text.substring(lastLineEnd+1, lineEnd).trim()
-                // we cannot append our anchor at special lines (TODO add more?)
-                var blackList = ['---','```','***'];
-                validPosFound = true
-                blackList.forEach(function(item, index, array) {
-                    var blackPos = strLine.indexOf(item)
-                    if(blackPos === 0) {
-                        validPosFound = false
-                    }
-                })
-            }
-            if(!validPosFound && lastLineEnd > 0) {
-                pos = lastLineEnd-1
-            }
-        } while (!validPosFound && lastLineEnd > 0)
-        // top position?
-        if(lastLineEnd < 0) {
-            lineEnd = 0
-            validPosFound = true
-        }
-        // no matching line found
-        if(!validPosFound) {
-            lineEnd = -1
-        }
-        return lineEnd
-    }
-
-    function convertToHtml(dataIn) {
-        var currentConvert = comboConvert.model[comboConvert.currentIndex]
-        var dataHtml = MarkDownQt.convert(currentConvert, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataIn)
-        // prepend style
-        var bGithubStyle = isGithubStyle()
-        if(bGithubStyle) {
-            dataHtml = MarkDownQt.convert("github-markdown-css", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        // framing (header / footer)
-        if(bGithubStyle) {
-            dataHtml = MarkDownQt.addFraming("github-markdown-css", MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        else {
-            dataHtml = MarkDownQt.addFraming(currentConvert, MarkDownQt.FormatHtmlUtf8, dataHtml)
-        }
-        return dataHtml
-    }
-
     function _updateHtml() {
         // reset worker properties
         window.bScrollTop = false
@@ -111,11 +62,11 @@ ApplicationWindow {
 
         // auto follow does not work on github
         if(comboConvert.model[comboConvert.currentIndex] !== "github-online") {
-            lineEnd = findAnchorInjectPosition(text, pos)
+            lineEnd = htmlHelper.findAnchorInjectPosition(text, pos)
             var linesUp = settings.autoScrollTopLinesMargin+1
             while(lineEnd > 0 && linesUp > 0) {
                 pos = text.lastIndexOf("\n", lineEnd-1);
-                lineEnd = findAnchorInjectPosition(text, pos)
+                lineEnd = htmlHelper.findAnchorInjectPosition(text, pos)
                 linesUp--
             }
         }
@@ -145,7 +96,7 @@ ApplicationWindow {
         // * HTML quirks are done most easily with UTF-8 encoded text
         // * convertToHtml expects javascript arraybuffer
         // => convert back & forth
-        var strHtml = QtHelper.utf8DataToStr(convertToHtml(QtHelper.strToUtf8Data(injText)))
+        var strHtml = QtHelper.utf8DataToStr(htmlHelper.convertToHtml(QtHelper.strToUtf8Data(injText), isGithubStyle()))
 
         if(window.strTagInjected !== "") {
             // hack away quoted anchors
@@ -218,7 +169,7 @@ ApplicationWindow {
             if(!fileName.endsWith(".pdf")) {
                 fileName += ".pdf"
             }
-            var dataHtml = convertToHtml(QtHelper.strToUtf8Data(textIn.text))
+            var dataHtml = htmlHelper.convertToHtml(QtHelper.strToUtf8Data(textIn.text), isGithubStyle())
             if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
                 console.log("PDF " + fileName + " created")
             }
