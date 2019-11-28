@@ -47,6 +47,10 @@ ApplicationWindow {
             }
             webView.loadHtml(strHtmlWithSearchTag, strBaseUrl)
         }
+        // Html source view auto-scroll
+        onIHtmlPositionChanged: {
+            htmlSourceView.startScrollTo(iHtmlPosition)
+        }
     }
 
     readonly property var styleStrings: [qsTr("Default Style"), qsTr("QT/QML Label Style"), qsTr("Github CSS"), qsTr("HTML"), qsTr("HTML Github CSS")]
@@ -265,14 +269,22 @@ ApplicationWindow {
             text: htmlConverter.strHtml
         }
         // HtmlSourceCode view
-        ScrollView {
+        Flickable {
+            id: htmlScrollView
             anchors.top: htmlToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
             visible: isHtmlSourceVisible() && !showOnlineHelp
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOn //AsNeeded
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+            }
+            ScrollBar.horizontal: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+            }
+            contentWidth: htmlSourceView.contentWidth
+            contentHeight: htmlSourceView.contentHeight
+            clip: true
             TextArea {
                 id: htmlSourceView
                 readOnly: true
@@ -280,7 +292,20 @@ ApplicationWindow {
                 selectByMouse: true
                 selectByKeyboard: true
                 text: htmlConverter.strHtml
-                cursorPosition: htmlConverter.iHtmlPosition
+                property bool bCursorPosChangedByExtern: false
+                function startScrollTo(position) {
+                    htmlSourceView.bCursorPosChangedByExtern = true
+                    htmlSourceView.cursorPosition = position
+                }
+                onCursorRectangleChanged: {
+                    if(bCursorPosChangedByExtern) {
+                        htmlScrollView.contentY = cursorRectangle.y
+                        bCursorPosChangedByExtern = false
+                    }
+                }
+                onContentHeightChanged: {
+                    startScrollTo(htmlConverter.iHtmlPosition)
+                }
             }
         }
         // Html view
