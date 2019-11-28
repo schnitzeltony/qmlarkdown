@@ -19,7 +19,7 @@ Item {
         return privateItem.userMdActivity(strMd, strConvertLib, bGithubStyle, iPosition)
     }
     function convertToHtml(strMd, strConvertLib, bGithubStyle) {
-        return privateItem.convertToHtml(strMd, strConvertLib, bGithubStyle, true)
+        return privateItem.convertToHtml(strMd, strConvertLib, bGithubStyle, false)
     }
 
     // private
@@ -60,17 +60,12 @@ Item {
                 }
             }
         }
-        function convertToHtml(strMd, strConvertLib, bGithubStyle, bForceFullConversion) {
+        function convertToHtml(strMd, strConvertLib, bGithubStyle, bKeepBareHtml) {
             var dataHtml
-            if(bForceFullConversion || privateItem.bHtmlBareChange) {
-                var dataInUtf8 = QtHelper.strToUtf8Data(strMd)
-                dataHtml = MarkDownQt.convert(strConvertLib, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataInUtf8)
-                if(!bForceFullConversion) {
-                    privateItem.dataLastBareHtml = dataHtml
-                }
-            }
-            else {
-                dataHtml = privateItem.dataLastBareHtml
+            var dataInUtf8 = QtHelper.strToUtf8Data(strMd)
+            dataHtml = MarkDownQt.convert(strConvertLib, MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8, dataInUtf8)
+            if(bKeepBareHtml) {
+                privateItem.dataLastBareHtml = dataHtml
             }
 
             // a bit of a hack but better than converting twice
@@ -139,23 +134,23 @@ Item {
                 }
             }
             var bScrollTop = false
-            var strHtmlWithInjTag
+            var strMdWithInjTag
             var strSearchTagInjected = ""
             if(lineEnd > 0) {
                 var txtLead = strCurrentMd.substring(0, lineEnd)
                 var txtTrail = strCurrentMd.substring(lineEnd)
-                strSearchTagInjected = " " + idStr
-                strHtmlWithInjTag = txtLead + strSearchTagInjected + txtTrail
+                strSearchTagInjected = idStr
+                strMdWithInjTag = txtLead + " " + strSearchTagInjected + txtTrail
             }
             else {
-                strHtmlWithInjTag = strCurrentMd
+                strMdWithInjTag = strCurrentMd
                 if(lineEnd === 0) {
                     bScrollTop = true
                 }
             }
 
             // convert MD -> HTML (!!avoid writing external vars more than necessary)
-            var strHtmlWithSearchTag = QtHelper.utf8DataToStr(convertToHtml(strHtmlWithInjTag, privateItem.strCurrentConvertLib, bCurrentGithubStyle, false))
+            var strHtmlWithSearchTag = QtHelper.utf8DataToStr(convertToHtml(strMdWithInjTag, privateItem.strCurrentConvertLib, bCurrentGithubStyle, true))
             var iHtmlPosition = 0
             if(strSearchTagInjected !== "") {
                 // hack away quoted anchors
