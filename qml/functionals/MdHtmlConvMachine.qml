@@ -54,7 +54,7 @@ Item {
             if(privateItem.bHtmlBareChange ||
                     privateItem.bHtmlPositionChange ||
                     privateItem.bHtmlStyleChange) {
-                userInputTimer.start()
+                userInputTimer.restart()
                 if(!minUpdateTimer.running) {
                     minUpdateTimer.start()
                 }
