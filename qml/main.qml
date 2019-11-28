@@ -266,7 +266,7 @@ ApplicationWindow {
                           }
                           break;
                       case 2: // source
-                          if(bHtmlBareChange) {
+                          if(bHtmlBareChange || bHtmlStyleChange) {
                               if(htmlConverter.propertyStrSearchTagInjected === "") {
                                   htmlSourceView.text =  htmlConverter.propertyStrHtmlWithSearchTag
                               }
