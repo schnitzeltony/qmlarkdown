@@ -311,6 +311,7 @@ ApplicationWindow {
                   // Qt label view
                   Label {
                       id: qtLabelView
+                      wrapMode: Text.WordWrap
                   }
                   // HtmlSourceCode view
                   CTRLS.ScrolledTextOut {
