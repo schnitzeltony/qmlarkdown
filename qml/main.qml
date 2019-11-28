@@ -231,7 +231,6 @@ ApplicationWindow {
                         else {
                             color = "red"
                         }
-
                     }
                 }
                 ComboBox {
@@ -269,44 +268,14 @@ ApplicationWindow {
             text: htmlConverter.strHtml
         }
         // HtmlSourceCode view
-        Flickable {
-            id: htmlScrollView
+        CTRLS.ScrolledTextOut {
+            id: htmlSourceView
             anchors.top: htmlToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             width: parent.width / 2
+            text: htmlConverter.strHtml
             visible: isHtmlSourceVisible() && !showOnlineHelp
-            ScrollBar.vertical: ScrollBar {
-                policy: ScrollBar.AlwaysOn
-            }
-            ScrollBar.horizontal: ScrollBar {
-                policy: ScrollBar.AlwaysOn
-            }
-            contentWidth: htmlSourceView.contentWidth
-            contentHeight: htmlSourceView.contentHeight
-            clip: true
-            TextArea {
-                id: htmlSourceView
-                readOnly: true
-                wrapMode: Text.WordWrap
-                selectByMouse: true
-                selectByKeyboard: true
-                text: htmlConverter.strHtml
-                property bool bCursorPosChangedByExtern: false
-                function startScrollTo(position) {
-                    htmlSourceView.bCursorPosChangedByExtern = true
-                    htmlSourceView.cursorPosition = position
-                }
-                onCursorRectangleChanged: {
-                    if(bCursorPosChangedByExtern) {
-                        htmlScrollView.contentY = cursorRectangle.y
-                        bCursorPosChangedByExtern = false
-                    }
-                }
-                onContentHeightChanged: {
-                    startScrollTo(htmlConverter.iHtmlPosition)
-                }
-            }
         }
         // Html view
         SwipeView {
