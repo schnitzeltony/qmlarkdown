@@ -251,20 +251,21 @@ ApplicationWindow {
                 SwipeView {
                   id: swipeDisplaysConverted
                   function newHtmlData(bHtmlBareChange, bHtmlPositionChange, bHtmlStyleChange) {
-                      if(tabWebView.checked) {
+                      switch(currentIndex) {
+                      case 0: // web
                           var strBaseUrl = "file://" + projectPath.text
                           // append trailing '/'
                           if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
                               strBaseUrl += "/"
                           }
                           webView.loadHtml(htmlConverter.propertyStrHtmlWithSearchTag, strBaseUrl)
-                      }
-                      if(tabQtView.checked) {
+                          break;
+                      case 1: // qt
                           if(bHtmlBareChange) {
                               qtLabelView.text = htmlConverter.propertyStrHtmlBare
                           }
-                      }
-                      if(tabSourceView.checked) {
+                          break;
+                      case 2: // source
                           if(bHtmlBareChange) {
                               if(htmlConverter.propertyStrSearchTagInjected === "") {
                                   htmlSourceView.text =  htmlConverter.propertyStrHtmlWithSearchTag
@@ -276,6 +277,7 @@ ApplicationWindow {
                           if(bHtmlPositionChange) {
                               htmlSourceView.startScrollTo(htmlConverter.propertyIHtmlPosition)
                           }
+                          break;
                       }
                   }
                   width: parent.width
@@ -284,6 +286,7 @@ ApplicationWindow {
                   currentIndex: tabBarConverted.currentIndex
                   onCurrentIndexChanged: {
                       swipeDisplaysConverted.newHtmlData(true, true, true)
+                      textIn.forceActiveFocus()
                   }
                   spacing: 10
                   // Html view
