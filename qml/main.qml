@@ -275,7 +275,7 @@ ApplicationWindow {
                                   htmlSourceView.text = htmlConverter.propertyStrHtmlWithSearchTag.replace(htmlConverter.propertyStrSearchTagInjected, "")
                               }
                           }
-                          if(bHtmlPositionChange) {
+                          if(bHtmlPositionChange || bHtmlStyleChange) {
                               htmlSourceView.startScrollTo(htmlConverter.propertyIHtmlPosition)
                           }
                           break;
