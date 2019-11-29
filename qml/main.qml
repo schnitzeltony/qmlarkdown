@@ -46,8 +46,13 @@ ApplicationWindow {
     function isGithubStyle() {
         return comboStyle.currentIndex === 1
     }
-    function userMdActivity() {
-        htmlConverter.userMdActivity(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle(), textIn.cursorPosition)
+    function userMdActivity(backHome = false) {
+        if(backHome) {
+            swipeDisplaysConverted.newHtmlData(true, true, true)
+        }
+        else {
+            htmlConverter.userMdActivity(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle(), textIn.cursorPosition)
+        }
     }
 
     property bool showOnlineHelp: false
@@ -131,7 +136,7 @@ ApplicationWindow {
                     font.pointSize: 16
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file_pdf)
                     Layout.preferredWidth: height
-                    onPressed: {
+                    onReleased: {
                         pdfFileDialog.open()
                         textIn.forceActiveFocus()
                     }
@@ -187,8 +192,8 @@ ApplicationWindow {
                     font.pointSize: 16
                     text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
                     Layout.preferredWidth: height
-                    onPressed: {
-                        !showOnlineHelp ? userMdActivity() : helpViewLoader.item.url = helpUrl
+                    onReleased: {
+                        !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
                         textIn.forceActiveFocus()
                     }
                 }
@@ -226,7 +231,7 @@ ApplicationWindow {
                     font.pointSize: 16
                     text: FA_SOLID.icon(!showOnlineHelp ? FA_SOLID.fa_solid_900_question : FA_SOLID.fa_solid_900_backward)
                     Layout.preferredWidth: height
-                    onPressed: {
+                    onReleased: {
                         // Keep help view once loaded
                         helpViewLoader.active = true
                         showOnlineHelp = !showOnlineHelp
