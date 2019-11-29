@@ -3,6 +3,7 @@
         <file>qml/main.qml</file>
         <file>qml/controls/MdInput.qml</file>
         <file>qml/controls/ScrolledTextOut.qml</file>
+        <file>qml/controls/TabsConverted.qml</file>
         <file>qml/functionals/MdHtmlConvMachine.qml</file>
     </qresource>
     <qresource prefix="/">

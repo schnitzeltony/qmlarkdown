@@ -30,7 +30,6 @@ ApplicationWindow {
         property alias projectPath: projectPath.text
         property alias convertType: comboConvert.currentIndex
         property alias style: comboStyle.currentIndex
-        property alias currentTab: swipeDisplaysConverted.currentIndex
         // non-interactive
         property string helpUrl: "https://commonmark.org/help/"
     }
@@ -38,7 +37,7 @@ ApplicationWindow {
     FUNCTIONALS.MdHtmlConvMachine {
         id: htmlConverter
         onConversionDone: {
-            swipeDisplaysConverted.newHtmlData(bHtmlBareChange, bHtmlPositionChange, bHtmlStyleChange)
+            tabsConverted.handleNewHtmlData(bHtmlBareChange, bHtmlPositionChange, bHtmlStyleChange)
         }
     }
 
@@ -48,7 +47,7 @@ ApplicationWindow {
     }
     function userMdActivity(backHome = false) {
         if(backHome) {
-            swipeDisplaysConverted.newHtmlData(true, true, true)
+            tabsConverted.handleNewHtmlData(true, true, true)
         }
         else {
             htmlConverter.userMdActivity(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle(), textIn.cursorPosition)
@@ -252,96 +251,10 @@ ApplicationWindow {
             clip: true
             currentIndex: showOnlineHelp ? 1 : 0
             interactive: false
-            Item {
-                // converted display variants - see tabs
-                SwipeView {
-                  id: swipeDisplaysConverted
-                  function newHtmlData(bHtmlBareChange, bHtmlPositionChange, bHtmlStyleChange) {
-                      switch(currentIndex) {
-                      case 0: // web
-                          var strBaseUrl = "file://" + projectPath.text
-                          // append trailing '/'
-                          if(strBaseUrl.substring(strBaseUrl.length-1, strBaseUrl.length) !== "/") {
-                              strBaseUrl += "/"
-                          }
-                          webView.loadHtml(htmlConverter.propertyStrHtmlWithSearchTag, strBaseUrl)
-                          break;
-                      case 1: // qt
-                          if(bHtmlBareChange) {
-                              qtLabelView.text = htmlConverter.propertyStrHtmlBare
-                          }
-                          break;
-                      case 2: // source
-                          if(bHtmlBareChange || bHtmlStyleChange) {
-                              if(htmlConverter.propertyStrSearchTagInjected === "") {
-                                  htmlSourceView.text =  htmlConverter.propertyStrHtmlWithSearchTag
-                              }
-                              else {
-                                  htmlSourceView.text = htmlConverter.propertyStrHtmlWithSearchTag.replace(htmlConverter.propertyStrSearchTagInjected, "")
-                              }
-                          }
-                          if(bHtmlPositionChange || bHtmlStyleChange) {
-                              htmlSourceView.startScrollTo(htmlConverter.propertyIHtmlPosition)
-                          }
-                          break;
-                      }
-                  }
-                  width: parent.width
-                  anchors.top: parent.top
-                  anchors.bottom: tabBarConverted.top
-                  currentIndex: tabBarConverted.currentIndex
-                  onCurrentIndexChanged: {
-                      swipeDisplaysConverted.newHtmlData(true, true, true)
-                      textIn.forceActiveFocus()
-                  }
-                  spacing: 10
-                  // Html view
-                  WebEngineView {
-                      id: webView
-                      onContextMenuRequested: function(request) {
-                          request.accepted = true;
-                      }
-                      onLoadingChanged: function(loadRequest) {
-                          if(loadRequest.errorCode === 0 &&
-                                  loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                              if(htmlConverter.propertyBScrollTop) {
-                                  runJavaScript('document.body.scrollTop = 0; document.documentElement.scrollTop = 0;')
-                              }
-                              else if (htmlConverter.propertyStrSearchTagInjected !== "") {
-                                  runJavaScript('document.getElementById("' + htmlConverter.propertyStrSearchString +'").scrollIntoView(true);')
-                              }
-                          }
-                      }
-                  }
-                  // Qt label view
-                  Label {
-                      id: qtLabelView
-                      wrapMode: Text.WordWrap
-                  }
-                  // HtmlSourceCode view
-                  CTRLS.ScrolledTextOut {
-                      id: htmlSourceView
-                  }
-                }
-                TabBar {
-                  id: tabBarConverted
-                  width: parent.width
-                  anchors.bottom: parent.bottom
-                  currentIndex: swipeDisplaysConverted.currentIndex
-                  contentHeight: 32
-                  TabButton {
-                      id: tabWebView
-                      text: qsTr("Web view")
-                  }
-                  TabButton {
-                      id: tabQtView
-                      text: qsTr("Qt/QML control")
-                  }
-                  TabButton {
-                      id: tabSourceView
-                      text: qsTr("Html source")
-                  }
-                }
+
+            CTRLS.TabsConverted {
+                id: tabsConverted
+                propertyHtmlConverter: htmlConverter
             }
             Loader {
                 id: helpViewLoader
