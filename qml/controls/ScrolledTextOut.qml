@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 Flickable {
     id: flickableItem
     // public property
+    property alias textArea: textArea
     property alias text: textArea.text
     property alias textDocument: textArea.textDocument
     // public method
@@ -29,6 +30,8 @@ Flickable {
         wrapMode: Text.WordWrap
         selectByMouse: true
         selectByKeyboard: true
+        persistentSelection: true
+        focus: true
         property bool bCursorPosChangedByExtern: false
         property int iLastPosition: 0
 

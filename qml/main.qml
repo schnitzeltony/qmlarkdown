@@ -168,9 +168,7 @@ ApplicationWindow {
             anchors.left: parent.left
             width: parent.width / 2
             onTextChanged: userMdActivity()
-            onCursorPositionChanged: {
-                userMdActivity()
-            }
+            onCursorPositionChanged: userMdActivity()
         }
 
         // Toolbar converted
