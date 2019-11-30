@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtWebEngine 1.8
 import Qt.labs.settings 1.0
+import KSyntaxHighlighting 1.0
 
 import "qrc:/qml/controls" as CTRLS
 
@@ -87,6 +88,11 @@ Item {
         // HtmlSourceCode view
         CTRLS.ScrolledTextOut {
             id: htmlSourceView
+            KSyntaxHighlighting {
+                qmlTextDocument: htmlSourceView.textDocument
+                themeName: "Default"
+                definitionName: "HTML"
+            }
         }
     }
     TabBar {

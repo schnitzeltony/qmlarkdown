@@ -1,10 +1,10 @@
 #include "qthelper.h"
 #include <markdown-qt.h>
+#include "ksyntaxhighlightingwrapper.h"
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QtWebEngine>
-
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
     CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
+    qmlRegisterType<KSyntaxHighlightingWrapper>("KSyntaxHighlighting", 1, 0, "KSyntaxHighlighting");
+
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

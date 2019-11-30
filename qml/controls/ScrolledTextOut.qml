@@ -5,6 +5,7 @@ Flickable {
     id: flickableItem
     // public property
     property alias text: textArea.text
+    property alias textDocument: textArea.textDocument
     // public method
     function startScrollTo(position) {
         textArea.bCursorPosChangedByExtern = true

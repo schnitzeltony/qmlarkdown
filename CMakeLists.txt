@@ -17,6 +17,9 @@ find_package(Qt5 "5.12.0" COMPONENTS Core Widgets Quick QuickControls2 WebEngine
 # libmarkdown-qt
 find_package(MarkdownQt REQUIRED)
 
+# QML wrapper for KF5SyntaxHighlighting
+find_package(KSyntaxHighlightingWrapper REQUIRED)
+
 # all sources by type
 set(HEADERS
     qthelper.h
@@ -55,6 +58,7 @@ target_link_libraries(qmlarkdown
         Qt5::QuickControls2
         Qt5::WebEngine
         MarkdownQt::MarkdownQt
+        KSyntaxHighlightingWrapper::KSyntaxHighlightingWrapper
 )
 
 # install application
