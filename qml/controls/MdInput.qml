@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import KSyntaxHighlighting 1.0
 
 ScrollView {
     property alias text: textArea.text
@@ -15,6 +16,11 @@ ScrollView {
         wrapMode: TextEdit.NoWrap
         selectByMouse: true
         cursorDelegate: inputCursorDelegate
+        KSyntaxHighlighting {
+            qmlTextDocument: textArea.textDocument
+            themeName: "Default"
+            definitionName: "Markdown"
+        }
 
         // custom cursor
         Component {
