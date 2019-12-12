@@ -36,12 +36,7 @@ Item {
                 }
                 webView.loadHtml(propertyHtmlConverter.propertyStrHtmlWithSearchTag, strBaseUrl)
                 break;
-            case 1: // qt
-                if(bHtmlBareChange) {
-                    qtLabelView.text = propertyHtmlConverter.propertyStrHtmlBare
-                }
-                break;
-            case 2: // source
+            case 1: // source
                 if(bHtmlBareChange || bHtmlStyleChange) {
                     if(propertyHtmlConverter.propertyStrSearchTagInjected === "") {
                         htmlSourceView.text =  propertyHtmlConverter.propertyStrHtmlWithSearchTag
@@ -79,11 +74,6 @@ Item {
                 }
             }
         }
-        // Qt label view
-        Label {
-            id: qtLabelView
-            wrapMode: Text.WordWrap
-        }
         // HtmlSourceCode view
         CTRLS.ScrolledTextOut {
             id: htmlSourceView
@@ -112,10 +102,6 @@ Item {
         TabButton {
             id: tabWebView
             text: qsTr("Web view")
-        }
-        TabButton {
-            id: tabQtView
-            text: qsTr("Qt/QML control")
         }
         TabButton {
             id: tabSourceView
