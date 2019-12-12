@@ -149,6 +149,7 @@ ApplicationWindow {
                 }
                 ComboBox {
                     id: comboConvert
+                    currentIndex: 1 // default cmark-gfm
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
                         userMdActivity()
@@ -218,6 +219,7 @@ ApplicationWindow {
                 ComboBox {
                     id: comboStyle
                     model: styleStrings
+                    currentIndex: 1 // default Github CSS
                     onCurrentIndexChanged: {
                         userMdActivity()
                         textIn.forceActiveFocus()
