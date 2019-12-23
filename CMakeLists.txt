@@ -22,12 +22,12 @@ find_package(KSyntaxHighlightingWrapper REQUIRED)
 
 # all sources by type
 set(HEADERS
-    qthelper.h
+    src/qthelper.h
 )
 
 set(SOURCES
     src/main.cpp
-    qthelper.cpp
+    src/qthelper.cpp
 )
 
 set(RESOURCES
