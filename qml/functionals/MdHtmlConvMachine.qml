@@ -92,7 +92,7 @@ Item {
                 if(lastLineEnd < lineEnd) {
                     var strLine =  text.substring(lastLineEnd+1, lineEnd).trim()
                     // we cannot append our anchor at special lines (TODO add more?)
-                    var blackList = ['---','```','***'];
+                    var blackList = ['===','---','```','***'];
                     validPosFound = true
                     blackList.forEach(function(item, index, array) {
                         var blackPos = strLine.indexOf(item)
