@@ -58,9 +58,18 @@ ApplicationWindow {
     readonly property string helpUrl: settings.helpUrl
 
     FontLoader {
+        source: "qrc:/Font-Awesome/webfonts/fa-brands-400.ttf"
+    }
+    FontLoader {
+        source: "qrc:/Font-Awesome/webfonts/fa-regular-400.ttf"
+    }
+    FontLoader {
         source: "qrc:/Font-Awesome/webfonts/fa-solid-900.ttf"
     }
 
+    readonly property string faFontFamily: "Font Awesome 5 Free"
+    readonly property string faFontStyle: "Solid"
+    readonly property real faPointSize: 16
     FileDialog {
         id: pdfFileDialog
         selectExisting: false
@@ -113,27 +122,31 @@ ApplicationWindow {
                     width: 2
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: FA_SOLID.fa_solid_900_file
                     Layout.preferredWidth: height
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_folder_open)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: FA_SOLID.fa_solid_900_folder_open
                     Layout.preferredWidth: height
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_save)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: FA_SOLID.fa_solid_900_save
                     Layout.preferredWidth: height
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_file_pdf)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: FA_SOLID.fa_solid_900_file_pdf
                     Layout.preferredWidth: height
                     onReleased: {
                         pdfFileDialog.open()
@@ -186,9 +199,10 @@ ApplicationWindow {
                     width: 2
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(FA_SOLID.fa_solid_900_home)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: FA_SOLID.fa_solid_900_home
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
@@ -226,9 +240,10 @@ ApplicationWindow {
                     }
                 }
                 Button {
-                    font.family: "Font Awesome 5 Free"
-                    font.pointSize: 16
-                    text: FA_SOLID.icon(!showOnlineHelp ? FA_SOLID.fa_solid_900_question : FA_SOLID.fa_solid_900_backward)
+                    font.family: faFontFamily
+                    font.styleName: faFontStyle
+                    font.pointSize: faPointSize
+                    text: !showOnlineHelp ? FA_SOLID.fa_solid_900_question : FA_SOLID.fa_solid_900_backward
                     Layout.preferredWidth: height
                     onReleased: {
                         // Keep help view once loaded
