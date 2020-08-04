@@ -6,9 +6,5 @@
         <file>qml/controls/ScrolledTextOut.qml</file>
         <file>qml/controls/TabsConverted.qml</file>
         <file>qml/functionals/MdHtmlConvMachine.qml</file>
-        <file>fa-js-wrapper/fa-solid-900.js</file>
-        <file>Font-Awesome/webfonts/fa-solid-900.ttf</file>
-        <file>Font-Awesome/webfonts/fa-brands-400.ttf</file>
-        <file>Font-Awesome/webfonts/fa-regular-400.ttf</file>
     </qresource>
 </RCC>

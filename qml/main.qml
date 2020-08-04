@@ -11,9 +11,10 @@ import QtQuick.Dialogs 1.3
 
 import MarkDownQt 1.0
 import QtHelper 1.0
+import FontAwesomeQml 1.0
+
 import "qrc:/qml/controls" as CTRLS
 import "qrc:/qml/functionals" as FUNCTIONALS
-import "qrc:/fa-js-wrapper/fa-solid-900.js" as FA_SOLID
 
 
 ApplicationWindow {
@@ -57,19 +58,10 @@ ApplicationWindow {
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
 
-    FontLoader {
-        source: "qrc:/Font-Awesome/webfonts/fa-brands-400.ttf"
-    }
-    FontLoader {
-        source: "qrc:/Font-Awesome/webfonts/fa-regular-400.ttf"
-    }
-    FontLoader {
-        source: "qrc:/Font-Awesome/webfonts/fa-solid-900.ttf"
-    }
-
-    readonly property string faFontFamily: "Font Awesome 5 Free"
+    readonly property string faFontFamily: FAQ.family
     readonly property string faFontStyle: "Solid"
     readonly property real faPointSize: 16
+
     FileDialog {
         id: pdfFileDialog
         selectExisting: false
@@ -125,28 +117,28 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FA_SOLID.fa_solid_900_file
+                    text: FAQ.g_file
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FA_SOLID.fa_solid_900_folder_open
+                    text: FAQ.g_folder_open
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FA_SOLID.fa_solid_900_save
+                    text: FAQ.g_save
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FA_SOLID.fa_solid_900_file_pdf
+                    text: FAQ.g_file_pdf
                     Layout.preferredWidth: height
                     onReleased: {
                         pdfFileDialog.open()
@@ -202,7 +194,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FA_SOLID.fa_solid_900_home
+                    text: FAQ.g_home
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
@@ -243,7 +235,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: !showOnlineHelp ? FA_SOLID.fa_solid_900_question : FA_SOLID.fa_solid_900_backward
+                    text: !showOnlineHelp ? FAQ.g_question : FAQ.g_backward
                     Layout.preferredWidth: height
                     onReleased: {
                         // Keep help view once loaded

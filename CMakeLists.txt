@@ -20,6 +20,9 @@ find_package(MarkdownQt REQUIRED)
 # QML wrapper for KF5SyntaxHighlighting
 find_package(KSyntaxHighlightingWrapper REQUIRED)
 
+# QML wrapper for Font-Awesome
+find_package(FontAweSomeQml REQUIRED)
+
 # all sources by type
 set(HEADERS
     src/qthelper.h
@@ -59,6 +62,7 @@ target_link_libraries(qmlarkdown
         Qt5::WebEngine
         MarkdownQt::MarkdownQt
         KSyntaxHighlightingWrapper::KSyntaxHighlightingWrapper
+        FontAweSomeQml::FontAweSomeQml
 )
 
 # install application
