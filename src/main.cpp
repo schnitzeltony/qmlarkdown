@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
-    qmlRegisterType<KSyntaxHighlightingWrapper>("KSyntaxHighlighting", 1, 0, "KSyntaxHighlighting");
+    KSyntaxHighlightingWrapper::registerQml();
     // Just registering solid-variant saves us from setting font.styleName all over the placed
     // code is still there in QML...
     FontAwesomeQml::registerFonts(false, true, false);
