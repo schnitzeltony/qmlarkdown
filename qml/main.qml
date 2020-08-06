@@ -58,8 +58,8 @@ ApplicationWindow {
     property bool showOnlineHelp: false
     readonly property string helpUrl: settings.helpUrl
 
-    readonly property string faFontFamily: FAQ.family
-    readonly property string faFontStyle: "Solid"
+    readonly property string faFontFamily: FAQ.fontFamily
+    readonly property string faFontStyle: "" // if more than fa_solid is registered this has to be set to "Solid"
     readonly property real faPointSize: 16
 
     FileDialog {
@@ -117,28 +117,28 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.g_file
+                    text: FAQ.fa_file
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.g_folder_open
+                    text: FAQ.fa_folder_open
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.g_save
+                    text: FAQ.fa_save
                     Layout.preferredWidth: height
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.g_file_pdf
+                    text: FAQ.fa_file_pdf
                     Layout.preferredWidth: height
                     onReleased: {
                         pdfFileDialog.open()
@@ -194,7 +194,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.g_home
+                    text: FAQ.fa_home
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
@@ -235,7 +235,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: !showOnlineHelp ? FAQ.g_question : FAQ.g_backward
+                    text: !showOnlineHelp ? FAQ.fa_question : FAQ.fa_backward
                     Layout.preferredWidth: height
                     onReleased: {
                         // Keep help view once loaded

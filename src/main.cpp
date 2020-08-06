@@ -24,6 +24,9 @@ int main(int argc, char *argv[])
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
     qmlRegisterType<KSyntaxHighlightingWrapper>("KSyntaxHighlighting", 1, 0, "KSyntaxHighlighting");
+    // Just registering solid-variant saves us from setting font.styleName all over the placed
+    // code is still there in QML...
+    FontAwesomeQml::registerFonts(false, true, false);
     FontAwesomeQml::registerFAQml();
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
