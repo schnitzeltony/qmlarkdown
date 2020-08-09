@@ -12,12 +12,12 @@ int main(int argc, char *argv[])
     //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     qunsetenv("QT_IM_MODULE");
 
+    QtWebEngine::initialize();
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     app.setOrganizationName("schnitzeltony");
 
-    QtWebEngine::initialize();
     QQmlApplicationEngine engine;
 
     CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
