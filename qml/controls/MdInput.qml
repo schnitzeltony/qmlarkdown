@@ -24,16 +24,18 @@ Item {
             focus: true
             selectByMouse: true
             cursorDelegate: inputCursorDelegate
+            font.family: "Source Code Pro"
+            font.pointSize: 11 // TODO setting
             MouseArea {
                 acceptedButtons: Qt.RightButton
                 anchors.fill: parent
                 onClicked: contextMenuMdInput.popup()
             }
-            /*KSyntaxHighlighting {
+            KSyntaxHighlighting {
                 qmlTextDocument: textArea.textDocument
                 themeName: "Default"
                 definitionName: "Markdown"
-            }*/
+            }
             // custom cursor
             Component {
                 id: inputCursorDelegate

@@ -34,6 +34,8 @@ Flickable {
         focus: true
         property bool bCursorPosChangedByExtern: false
         property int iLastPosition: 0
+        font.family: "Source Code Pro"
+        font.pointSize: 11 // TODO setting
 
         onCursorRectangleChanged: {
             if(bCursorPosChangedByExtern) {
