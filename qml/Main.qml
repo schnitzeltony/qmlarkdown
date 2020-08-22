@@ -13,9 +13,6 @@ import MarkDownQt 1.0
 import QtHelper 1.0
 import FontAwesomeQml 1.0
 
-import "qrc:/qml/controls" as CTRLS
-import "qrc:/qml/functionals" as FUNCTIONALS
-
 
 ApplicationWindow {
     id: window
@@ -35,7 +32,7 @@ ApplicationWindow {
         property string helpUrl: "https://commonmark.org/help/"
     }
 
-    FUNCTIONALS.MdHtmlConvMachine {
+    MdHtmlConvMachine {
         id: htmlConverter
         onConversionDone: {
             tabsConverted.handleNewHtmlData(bHtmlBareChange, bHtmlPositionChange, bHtmlStyleChange)
@@ -167,7 +164,7 @@ ApplicationWindow {
             }
         }
         // Source input
-        CTRLS.MdInput {
+        MdInput {
             id: textIn
             anchors.top: sourceToolBar.bottom
             anchors.bottom: parent.bottom
@@ -259,7 +256,7 @@ ApplicationWindow {
             currentIndex: showOnlineHelp ? 1 : 0
             interactive: false
 
-            CTRLS.TabsConverted {
+            TabsConverted {
                 id: tabsConverted
                 propertyHtmlConverter: htmlConverter
             }

@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import KSyntaxHighlighting 1.0
-import "qrc:/qml/controls" as CTRLS
 
 Item {
     // public write properties
@@ -62,7 +61,7 @@ Item {
             }
         }
     }
-    CTRLS.ContextMenuBase {
+    ContextMenuBase {
         id: contextMenuMdInput
         targetItem: textArea
     }

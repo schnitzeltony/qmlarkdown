@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtWebEngine 1.8
 import Qt.labs.settings 1.0
 import KSyntaxHighlighting 1.0
-import "qrc:/qml/controls" as CTRLS
 
 Item {
     // public write properties
@@ -75,7 +74,7 @@ Item {
             }
         }
         // HtmlSourceCode view
-        CTRLS.ScrolledTextOut {
+        ScrolledTextOut {
             id: htmlSourceView
             MouseArea {
                 acceptedButtons: Qt.RightButton
@@ -89,7 +88,7 @@ Item {
             }
         }
     }
-    CTRLS.ContextMenuBase {
+    ContextMenuBase {
         id: contextMenuHtml
         targetItem: htmlSourceView.textArea
     }

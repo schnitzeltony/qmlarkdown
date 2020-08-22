@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     FontAwesomeQml::registerFonts(false, true, false);
     FontAwesomeQml::registerFAQml();
 
-    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
