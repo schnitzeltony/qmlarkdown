@@ -34,7 +34,7 @@ set(SOURCES
 )
 
 set(RESOURCES
-    appdata.qrc
+    qmlarkdown.qrc
 )
 
 # our application

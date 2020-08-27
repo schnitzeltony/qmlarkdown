@@ -52,7 +52,7 @@ Item {
         }
         onCurrentIndexChanged: {
             newHtmlData(true, true, true)
-            textIn.forceActiveFocus()
+            //textIn.forceActiveFocus()
         }
         spacing: 10
         // Html view

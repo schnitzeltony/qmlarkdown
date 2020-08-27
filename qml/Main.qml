@@ -12,7 +12,7 @@ import QtQuick.Dialogs 1.3
 import MarkDownQt 1.0
 import QtHelper 1.0
 import FontAwesomeQml 1.0
-
+import KSyntaxHighlighting 1.0
 
 ApplicationWindow {
     id: window
@@ -48,7 +48,11 @@ ApplicationWindow {
             tabsConverted.handleNewHtmlData(true, true, true)
         }
         else {
-            htmlConverter.userMdActivity(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle(), textIn.cursorPosition)
+            htmlConverter.userMdActivity(
+                        textIn.textArea.text,
+                        comboConvert.model[comboConvert.currentIndex],
+                        isGithubStyle(),
+                        textIn.textArea.cursorPosition)
         }
     }
 
@@ -73,7 +77,10 @@ ApplicationWindow {
             if(!fileName.endsWith(".pdf")) {
                 fileName += ".pdf"
             }
-            var dataHtml = htmlConverter.convertToHtml(textIn.text, comboConvert.model[comboConvert.currentIndex], isGithubStyle())
+            var dataHtml = htmlConverter.convertToHtml(
+                        textIn.textArea.text,
+                        comboConvert.model[comboConvert.currentIndex],
+                        isGithubStyle())
             if(MarkDownQt.convertToFile("qtwebenginepdf", MarkDownQt.FormatHtmlUtf8, MarkDownQt.FormatPdfBin, dataHtml, fileName)) {
                 console.log("PDF " + fileName + " created")
             }
@@ -139,7 +146,7 @@ ApplicationWindow {
                     Layout.preferredWidth: height
                     onReleased: {
                         pdfFileDialog.open()
-                        textIn.forceActiveFocus()
+                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -155,7 +162,7 @@ ApplicationWindow {
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
                         userMdActivity()
-                        textIn.forceActiveFocus()
+                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -164,14 +171,22 @@ ApplicationWindow {
             }
         }
         // Source input
-        MdInput {
+        CodeArea {
             id: textIn
             anchors.top: sourceToolBar.bottom
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             width: parent.width / 2
-            onTextChanged: userMdActivity()
-            onCursorPositionChanged: userMdActivity()
+            textArea.focus: true
+            textArea.onTextChanged: userMdActivity()
+            textArea.onCursorPositionChanged: userMdActivity()
+            textArea.font.family: "Source Code Pro"
+            textArea.font.pointSize: 11 // TODO setting
+            KSyntaxHighlighting {
+                qmlTextDocument: textIn.textArea.textDocument
+                themeName: "Default"
+                definitionName: "Markdown"
+            }
         }
 
         // Toolbar converted
@@ -191,11 +206,11 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
-                    text: FAQ.fa_home
+                    text: FAQ.icon(FAQ.fa_home)
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
-                        textIn.forceActiveFocus()
+                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -225,7 +240,7 @@ ApplicationWindow {
                     currentIndex: 1 // default Github CSS
                     onCurrentIndexChanged: {
                         userMdActivity()
-                        textIn.forceActiveFocus()
+                        //textIn.forceActiveFocus()
                     }
                 }
                 Button {

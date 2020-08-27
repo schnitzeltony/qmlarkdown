@@ -23,11 +23,12 @@ int main(int argc, char *argv[])
     CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
-    KSyntaxHighlightingWrapper::registerQml();
+    KSyntaxHighlightingWrapper::registerKshwQml();
+    KSyntaxHighlightingWrapper::registerCaQml(&engine);
     // Just registering solid-variant saves us from setting font.styleName all over the placed
     // code is still there in QML...
     FontAwesomeQml::registerFonts(false, true, false);
-    FontAwesomeQml::registerFAQml();
+    FontAwesomeQml::registerFAQml(&engine);
 
     const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
