@@ -121,6 +121,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: FAQ.fa_file
                     Layout.preferredWidth: height
                 }
@@ -128,6 +129,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: FAQ.fa_folder_open
                     Layout.preferredWidth: height
                 }
@@ -135,6 +137,7 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: FAQ.fa_save
                     Layout.preferredWidth: height
                 }
@@ -142,11 +145,11 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: FAQ.fa_file_pdf
                     Layout.preferredWidth: height
                     onReleased: {
                         pdfFileDialog.open()
-                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -159,10 +162,10 @@ ApplicationWindow {
                 ComboBox {
                     id: comboConvert
                     currentIndex: 1 // default cmark-gfm
+                    focusPolicy: Qt.NoFocus
                     model: MarkDownQt.availableConverters(MarkDownQt.FormatMdUtf8, MarkDownQt.FormatHtmlUtf8)
                     onCurrentIndexChanged: {
                         userMdActivity()
-                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -206,11 +209,11 @@ ApplicationWindow {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: FAQ.icon(FAQ.fa_home)
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
-                        //textIn.forceActiveFocus()
                     }
                 }
                 Item { // just margin
@@ -236,17 +239,18 @@ ApplicationWindow {
                 }
                 ComboBox {
                     id: comboStyle
+                    focusPolicy: Qt.NoFocus
                     model: styleStrings
                     currentIndex: 1 // default Github CSS
                     onCurrentIndexChanged: {
                         userMdActivity()
-                        //textIn.forceActiveFocus()
                     }
                 }
                 Button {
                     font.family: faFontFamily
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
+                    focusPolicy: Qt.NoFocus
                     text: !showOnlineHelp ? FAQ.fa_question : FAQ.fa_backward
                     Layout.preferredWidth: height
                     onReleased: {

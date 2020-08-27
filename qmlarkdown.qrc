@@ -3,7 +3,6 @@
         <file>qml/ContextMenuBase.qml</file>
         <file>qml/Main.qml</file>
         <file>qml/MdHtmlConvMachine.qml</file>
-        <file>qml/ScrolledTextOut.qml</file>
         <file>qml/TabsConverted.qml</file>
     </qresource>
 </RCC>

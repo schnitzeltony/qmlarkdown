@@ -38,21 +38,22 @@ Item {
             case 1: // source
                 if(bHtmlBareChange || bHtmlStyleChange) {
                     if(propertyHtmlConverter.propertyStrSearchTagInjected === "") {
-                        htmlSourceView.text =  propertyHtmlConverter.propertyStrHtmlWithSearchTag
+                        htmlSourceView.textArea.text = propertyHtmlConverter.propertyStrHtmlWithSearchTag
                     }
                     else {
-                        htmlSourceView.text = propertyHtmlConverter.propertyStrHtmlWithSearchTag.replace(propertyHtmlConverter.propertyStrSearchTagInjected, "")
+                        htmlSourceView.textArea.text =
+                                propertyHtmlConverter.propertyStrHtmlWithSearchTag.replace(propertyHtmlConverter.propertyStrSearchTagInjected, "")
                     }
                 }
                 if(bHtmlPositionChange || bHtmlStyleChange) {
-                    htmlSourceView.startScrollTo(propertyHtmlConverter.propertyIHtmlPosition)
+                    htmlSourceView.textArea.cursorPosition =
+                            htmlSourceView.textArea.findFirstPosInLine(propertyHtmlConverter.propertyIHtmlPosition)
                 }
                 break;
             }
         }
         onCurrentIndexChanged: {
             newHtmlData(true, true, true)
-            //textIn.forceActiveFocus()
         }
         spacing: 10
         // Html view
@@ -74,15 +75,13 @@ Item {
             }
         }
         // HtmlSourceCode view
-        ScrolledTextOut {
+        CodeArea {
             id: htmlSourceView
-            MouseArea {
-                acceptedButtons: Qt.RightButton
-                anchors.fill: parent
-                onClicked: contextMenuHtml.popup()
-            }
+            textArea.font.family: "Source Code Pro"
+            textArea.font.pointSize: 11 // TODO setting
+            textArea.readOnly: true
             KSyntaxHighlighting {
-                qmlTextDocument: htmlSourceView.textDocument
+                qmlTextDocument: htmlSourceView.textArea.textDocument
                 themeName: "Default"
                 definitionName: "HTML"
             }
@@ -100,10 +99,12 @@ Item {
         contentHeight: 32
         TabButton {
             id: tabWebView
+            focusPolicy: Qt.NoFocus
             text: qsTr("Web view")
         }
         TabButton {
             id: tabSourceView
+            focusPolicy: Qt.NoFocus
             text: qsTr("Html source")
         }
     }
