@@ -210,7 +210,7 @@ ApplicationWindow {
                     font.styleName: faFontStyle
                     font.pointSize: faPointSize
                     focusPolicy: Qt.NoFocus
-                    text: FAQ.icon(FAQ.fa_home)
+                    text: FAQ.fa_home
                     Layout.preferredWidth: height
                     onReleased: {
                         !showOnlineHelp ? userMdActivity(true) : helpViewLoader.item.url = helpUrl
