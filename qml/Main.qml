@@ -13,6 +13,7 @@ import MarkDownQt 1.0
 import QtHelper 1.0
 import FontAwesomeQml 1.0
 import KSyntaxHighlighting 1.0
+import TextAreaEnh 1.0
 
 ApplicationWindow {
     id: window
@@ -183,7 +184,6 @@ ApplicationWindow {
             textArea.focus: true
             textArea.onTextChanged: userMdActivity()
             textArea.onCursorPositionChanged: userMdActivity()
-            textArea.font.family: "Source Code Pro"
             textArea.font.pointSize: 11 // TODO setting
             KSyntaxHighlighting {
                 qmlTextDocument: textIn.textArea.textDocument

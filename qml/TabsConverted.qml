@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtWebEngine 1.8
 import Qt.labs.settings 1.0
 import KSyntaxHighlighting 1.0
+import TextAreaEnh 1.0
 
 Item {
     // public write properties
@@ -77,7 +78,6 @@ Item {
         // HtmlSourceCode view
         CodeArea {
             id: htmlSourceView
-            textArea.font.family: "Source Code Pro"
             textArea.font.pointSize: 11 // TODO setting
             textArea.readOnly: true
             KSyntaxHighlighting {
