@@ -1,6 +1,7 @@
 #include "qthelper.h"
 #include <markdown-qt.h>
 #include <ksyntaxhighlightingwrapper.h>
+#include <textarea_enhanced.h>
 #include <fontawesome-qml.h>
 #include <QApplication>
 #include <QQmlApplicationEngine>
@@ -23,8 +24,8 @@ int main(int argc, char *argv[])
     CMarkDownQt::setSettingsParameters(app.organizationName(), app.applicationName());
     CMarkDownQt::registerQML();
     QtHelper::registerQML();
-    KSyntaxHighlightingWrapper::registerKshwQml();
-    KSyntaxHighlightingWrapper::registerCaQml(&engine);
+    KSyntaxHighlightingWrapper::registerQml();
+    TextAreaEnhanced::registerQml(&engine);
     // Just registering solid-variant saves us from setting font.styleName all over the placed
     // code is still there in QML...
     FontAwesomeQml::registerFonts(false, true, false);

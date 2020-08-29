@@ -19,6 +19,7 @@ find_package(MarkdownQt REQUIRED)
 
 # QML wrapper for KF5SyntaxHighlighting
 find_package(KSyntaxHighlightingWrapper REQUIRED)
+find_package(TextAreaEnhanced REQUIRED)
 
 # QML wrapper for Font-Awesome
 find_package(FontAweSomeQml REQUIRED)
@@ -59,6 +60,7 @@ target_link_libraries(qmlarkdown
         Qt5::WebEngine
         MarkdownQt::MarkdownQt
         KSyntaxHighlightingWrapper::KSyntaxHighlightingWrapper
+        TextAreaEnhanced::TextAreaEnhanced
         FontAweSomeQml::FontAweSomeQml
 )
 

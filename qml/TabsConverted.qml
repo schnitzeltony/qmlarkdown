@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 import QtWebEngine 1.8
 import Qt.labs.settings 1.0
 import KSyntaxHighlighting 1.0
-import TextAreaEnh 1.0
+import TextAreaEnhanced 1.0
 
 Item {
     // public write properties

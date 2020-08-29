@@ -13,7 +13,7 @@ import MarkDownQt 1.0
 import QtHelper 1.0
 import FontAwesomeQml 1.0
 import KSyntaxHighlighting 1.0
-import TextAreaEnh 1.0
+import TextAreaEnhanced 1.0
 
 ApplicationWindow {
     id: window
