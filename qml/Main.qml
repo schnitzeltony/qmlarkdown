@@ -175,7 +175,7 @@ ApplicationWindow {
             }
         }
         // Source input
-        CodeArea {
+        TextAreaExCodeArea {
             id: textIn
             anchors.top: sourceToolBar.bottom
             anchors.bottom: parent.bottom

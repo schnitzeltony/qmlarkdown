@@ -76,7 +76,7 @@ Item {
             }
         }
         // HtmlSourceCode view
-        CodeArea {
+        TextAreaExCodeArea {
             id: htmlSourceView
             textArea.font.pointSize: 11 // TODO setting
             textArea.readOnly: true
