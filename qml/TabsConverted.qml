@@ -82,7 +82,7 @@ Item {
             textArea.readOnly: true
             KSyntaxHighlighting {
                 qmlTextDocument: htmlSourceView.textArea.textDocument
-                themeName: "Default"
+                themeName: "Breeze Light"
                 definitionName: "HTML"
             }
         }

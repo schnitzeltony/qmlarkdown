@@ -187,7 +187,7 @@ ApplicationWindow {
             textArea.font.pointSize: 11 // TODO setting
             KSyntaxHighlighting {
                 qmlTextDocument: textIn.textArea.textDocument
-                themeName: "Default"
+                themeName: "Breeze Light"
                 definitionName: "Markdown"
             }
         }
