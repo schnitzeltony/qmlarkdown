@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtWebEngine 1.8
 import Qt.labs.settings 1.0
-import KSyntaxHighlighting 1.0
+import org.kde.syntaxhighlighting 1.0
 import TextAreaEnhanced 1.0
 
 Item {
@@ -80,10 +80,10 @@ Item {
             id: htmlSourceView
             textArea.font.pointSize: 11 // TODO setting
             textArea.readOnly: true
-            KSyntaxHighlighting {
-                qmlTextDocument: htmlSourceView.textArea.textDocument
-                themeName: "Breeze Light"
-                definitionName: "HTML"
+            SyntaxHighlighter {
+                textEdit: htmlSourceView.textArea
+                theme: "Breeze Light"
+                definition: "HTML"
             }
         }
     }

@@ -12,8 +12,8 @@ import QtQuick.Dialogs 1.3
 import MarkDownQt 1.0
 import QtHelper 1.0
 import FontAwesomeQml 1.0
-import KSyntaxHighlighting 1.0
 import TextAreaEnhanced 1.0
+import org.kde.syntaxhighlighting 1.0
 
 ApplicationWindow {
     id: window
@@ -185,10 +185,10 @@ ApplicationWindow {
             textArea.onTextChanged: userMdActivity()
             textArea.onCursorPositionChanged: userMdActivity()
             textArea.font.pointSize: 11 // TODO setting
-            KSyntaxHighlighting {
-                qmlTextDocument: textIn.textArea.textDocument
-                themeName: "Breeze Light"
-                definitionName: "Markdown"
+            SyntaxHighlighter {
+                textEdit: textIn.textArea
+                theme: "Breeze Light"
+                definition: "Markdown"
             }
         }
 

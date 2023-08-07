@@ -6,23 +6,20 @@ set(PROJECT_VERSION "0.0.1")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# cmake macros
 include(FeatureSummary)
 
-# Qt5 libs
 find_package(Qt5 "5.12.0" COMPONENTS Core Widgets Quick QuickControls2 WebEngine CONFIG REQUIRED COMPONENTS)
 
-# libmarkdown-qt
+# https://github.com/schnitzeltony/markdown-qt
 find_package(MarkdownQt REQUIRED)
 
-# QML wrapper for KF5SyntaxHighlighting
-find_package(KSyntaxHighlightingWrapper REQUIRED)
+find_package(KF5SyntaxHighlighting REQUIRED)
+# https://github.com/schnitzeltony/ksyntax-highlighting-wrapper
 find_package(TextAreaEnhanced REQUIRED)
 
-# QML wrapper for Font-Awesome
+# https://github.com/schnitzeltony/fontawesome-qml
 find_package(FontAweSomeQml REQUIRED)
 
-# all sources by type
 set(HEADERS
     src/qthelper.h
 )
@@ -36,7 +33,6 @@ set(RESOURCES
     qmlarkdown.qrc
 )
 
-# our application
 add_executable(qmlarkdown
     ${SOURCES} ${HEADERS} ${RESOURCES}
 )
@@ -48,7 +44,6 @@ include_directories(
 # add QT_QML_DEBUG for debug-config
 target_compile_definitions(qmlarkdown PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
-# dependencies
 target_link_libraries(qmlarkdown
     PRIVATE
         Qt5::Core
@@ -57,15 +52,12 @@ target_link_libraries(qmlarkdown
         Qt5::QuickControls2
         Qt5::WebEngine
         MarkdownQt::MarkdownQt
-        KSyntaxHighlightingWrapper::KSyntaxHighlightingWrapper
         TextAreaEnhanced::TextAreaEnhanced
         FontAweSomeQml::FontAweSomeQml
 )
 
-# install application
 install(TARGETS qmlarkdown
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-# Display feature summary
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
